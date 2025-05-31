@@ -60,7 +60,7 @@ const TurfSearch: React.FC<TurfSearchProps> = ({ onSearch }) => {
             value={filters.type}
             onChange={(e) => setFilters({...filters, type: e.target.value})}
           >
-            <option value="">{t.selectType}</option>
+            <option value="all-types">{t.selectType}</option>
             <option value="football">Football</option>
             <option value="cricket">Cricket</option>
             <option value="basketball">Basketball</option>
@@ -81,7 +81,7 @@ const TurfSearch: React.FC<TurfSearchProps> = ({ onSearch }) => {
               value={filters.location}
               onChange={(e) => setFilters({...filters, location: e.target.value})}
             >
-              <option value="">{t.selectLocation}</option>
+              <option value="all-areas">{t.selectLocation}</option>
               <option value="gulshan">Gulshan</option>
               <option value="dhanmondi">Dhanmondi</option>
               <option value="uttara">Uttara</option>
@@ -120,7 +120,7 @@ const TurfSearch: React.FC<TurfSearchProps> = ({ onSearch }) => {
               value={filters.price}
               onChange={(e) => setFilters({...filters, price: e.target.value})}
             >
-              <option value="">{t.selectPrice}</option>
+              <option value="all-prices">{t.selectPrice}</option>
               <option value="0-50">$0 - $50</option>
               <option value="50-100">$50 - $100</option>
               <option value="100+">$100+</option>

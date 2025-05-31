@@ -146,7 +146,7 @@ const HeroSection = () => {
                       <SelectValue placeholder={t.location} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Areas</SelectItem>
+                      <SelectItem value="all-areas">All Areas</SelectItem>
                       <SelectItem value="dhanmondi">Dhanmondi</SelectItem>
                       <SelectItem value="gulshan">Gulshan</SelectItem>
                       <SelectItem value="banani">Banani</SelectItem>
@@ -160,7 +160,7 @@ const HeroSection = () => {
                       <SelectValue placeholder={t.sport} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Types</SelectItem>
+                      <SelectItem value="all-types">All Types</SelectItem>
                       <SelectItem value="football">Football</SelectItem>
                       <SelectItem value="cricket">Cricket</SelectItem>
                       <SelectItem value="basketball">Basketball</SelectItem>
