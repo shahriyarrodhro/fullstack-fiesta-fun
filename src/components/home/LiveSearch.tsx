@@ -31,7 +31,7 @@ const LiveSearch: React.FC<LiveSearchProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Mock turf data - in real app this would come from your backend
+  // Enhanced mock turf data with more variety
   const mockTurfs: Turf[] = [
     {
       id: 1,
@@ -82,10 +82,40 @@ const LiveSearch: React.FC<LiveSearchProps> = ({
       image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop',
       type: 'Basketball',
       availability: 'available'
+    },
+    {
+      id: 6,
+      name: 'Badminton Excellence',
+      location: 'Wari, Dhaka',
+      price: 1500,
+      rating: 4.4,
+      image: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=400&h=300&fit=crop',
+      type: 'Badminton',
+      availability: 'available'
+    },
+    {
+      id: 7,
+      name: 'Tennis Masters Court',
+      location: 'Baridhara, Dhaka',
+      price: 3500,
+      rating: 4.9,
+      image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400&h=300&fit=crop',
+      type: 'Tennis',
+      availability: 'available'
+    },
+    {
+      id: 8,
+      name: 'Volleyball Arena',
+      location: 'Dhanmondi, Dhaka',
+      price: 2200,
+      rating: 4.6,
+      image: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400&h=300&fit=crop',
+      type: 'Volleyball',
+      availability: 'closed'
     }
   ];
 
-  // Simulate API search with debouncing
+  // Enhanced search with better filtering
   useEffect(() => {
     if (query.length === 0) {
       setResults([]);
@@ -98,16 +128,24 @@ const LiveSearch: React.FC<LiveSearchProps> = ({
     setIsLoading(true);
     
     const timer = setTimeout(() => {
-      const filtered = mockTurfs.filter(turf =>
-        turf.name.toLowerCase().includes(query.toLowerCase()) ||
-        turf.location.toLowerCase().includes(query.toLowerCase()) ||
-        turf.type.toLowerCase().includes(query.toLowerCase())
-      );
+      const searchTerms = query.toLowerCase().split(' ');
+      const filtered = mockTurfs.filter(turf => {
+        return searchTerms.some(term => 
+          turf.name.toLowerCase().includes(term) ||
+          turf.location.toLowerCase().includes(term) ||
+          turf.type.toLowerCase().includes(term)
+        );
+      }).sort((a, b) => {
+        // Prioritize exact matches and higher ratings
+        const aScore = (a.name.toLowerCase().includes(query.toLowerCase()) ? 10 : 0) + a.rating;
+        const bScore = (b.name.toLowerCase().includes(query.toLowerCase()) ? 10 : 0) + b.rating;
+        return bScore - aScore;
+      });
       
       setResults(filtered);
       setIsOpen(true);
       setIsLoading(false);
-    }, 300);
+    }, 200); // Reduced debounce time for better responsiveness
 
     return () => clearTimeout(timer);
   }, [query]);
@@ -157,7 +195,7 @@ const LiveSearch: React.FC<LiveSearchProps> = ({
           placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="pl-10 h-12 border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white"
+          className="pl-10 h-12 border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white shadow-lg"
           onFocus={() => query.length >= 2 && setIsOpen(true)}
         />
         {isLoading && (
@@ -167,42 +205,49 @@ const LiveSearch: React.FC<LiveSearchProps> = ({
         )}
       </div>
 
-      {/* Search Results Dropdown */}
+      {/* Enhanced Search Results Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-xl mt-1 z-50 max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-2xl mt-2 z-50 max-h-96 overflow-y-auto">
           {results.length > 0 ? (
             <div className="p-2">
               {results.map((turf) => (
                 <div
                   key={turf.id}
-                  className="p-3 hover:bg-gray-50 cursor-pointer rounded-lg transition-colors group"
+                  className="p-4 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 cursor-pointer rounded-lg transition-all duration-300 group border-b border-gray-100 last:border-b-0"
                   onClick={() => handleSelect(turf)}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <img 
                       src={turf.image} 
                       alt={turf.name}
-                      className="w-12 h-12 rounded-lg object-cover"
+                      className="w-16 h-16 rounded-lg object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-medium text-gray-900 truncate group-hover:text-green-600 transition-colors">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold text-gray-900 truncate group-hover:text-green-600 transition-colors text-lg">
                           {turf.name}
                         </h4>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityColor(turf.availability)}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getAvailabilityColor(turf.availability)}`}>
                           {turf.availability}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex items-center gap-6 text-sm text-gray-600 mb-2">
                         <div className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
+                          <MapPin className="w-4 h-4" />
                           <span className="truncate">{turf.location}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                          <span>{turf.rating}</span>
+                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                          <span className="font-medium">{turf.rating}</span>
                         </div>
-                        <div className="font-medium text-green-600">
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">
+                            {turf.type}
+                          </span>
+                        </div>
+                        <div className="font-bold text-green-600 text-lg">
                           ৳{turf.price}/hr
                         </div>
                       </div>
@@ -212,23 +257,26 @@ const LiveSearch: React.FC<LiveSearchProps> = ({
               ))}
             </div>
           ) : query.length >= 2 ? (
-            <div className="p-4 text-center text-gray-500">
-              <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p>No turfs found for "{query}"</p>
-              <p className="text-sm">Try searching for a different location or sport</p>
+            <div className="p-6 text-center text-gray-500">
+              <Search className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p className="text-lg font-medium mb-1">No turfs found for "{query}"</p>
+              <p className="text-sm">Try searching for a different location, sport, or turf name</p>
             </div>
           ) : null}
           
           {query.length >= 2 && results.length > 0 && (
-            <div className="border-t border-gray-100 p-3">
+            <div className="border-t border-gray-100 p-4 bg-gray-50">
               <button 
-                className="w-full text-center text-green-600 hover:text-green-700 font-medium text-sm py-2 hover:bg-green-50 rounded-lg transition-colors"
+                className="w-full text-center text-green-600 hover:text-green-700 font-semibold text-sm py-3 hover:bg-green-50 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
                 onClick={() => {
-                  navigate(`/turfs?q=${query}`);
+                  navigate(`/turfs?q=${encodeURIComponent(query)}`);
                   setIsOpen(false);
                 }}
               >
-                View all results for "{query}" →
+                View all {results.length} results for "{query}"
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </button>
             </div>
           )}

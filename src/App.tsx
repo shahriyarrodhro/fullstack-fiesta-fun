@@ -13,9 +13,15 @@ import TurfDetails from "./pages/TurfDetails";
 import BookingConfirmation from "./pages/BookingConfirmation";
 import BookingSuccess from "./pages/BookingSuccess";
 import TournamentDetails from "./pages/TournamentDetails";
+import Tournaments from "./pages/Tournaments";
 import PlayerDashboard from "./pages/PlayerDashboard";
+import PlayerBookings from "./pages/PlayerBookings";
+import PlayerTeams from "./pages/PlayerTeams";
 import PlayerMatchmaking from "./pages/PlayerMatchmaking";
 import PlayerMessages from "./pages/PlayerMessages";
+import AdminDashboard from "./pages/AdminDashboard";
+import TurfOwnerDashboard from "./pages/TurfOwnerDashboard";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
