@@ -2,18 +2,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, MapPin, Calendar, Users } from 'lucide-react';
+import { MapPin, Calendar, Users } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
+import LiveSearch from './LiveSearch';
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const { language } = useApp();
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedSport, setSelectedSport] = useState('');
-  const [showResults, setShowResults] = useState(false);
 
   const content = {
     en: {
@@ -44,20 +42,12 @@ const HeroSection = () => {
 
   const t = content[language];
 
-  // Mock turfs for live search
-  const mockTurfs = [
-    { id: 1, name: 'Champions Arena', location: 'Dhanmondi, Dhaka', price: 2500 },
-    { id: 2, name: 'Victory Ground', location: 'Gulshan, Dhaka', price: 1800 },
-    { id: 3, name: 'Elite Football Hub', location: 'Banani, Dhaka', price: 4500 }
-  ];
-
-  const filteredTurfs = mockTurfs.filter(turf => 
-    turf.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    turf.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleSearch = () => {
-    navigate(`/turfs?q=${searchQuery}&location=${selectedLocation}&sport=${selectedSport}`);
+    const params = new URLSearchParams();
+    if (selectedLocation) params.set('location', selectedLocation);
+    if (selectedSport) params.set('sport', selectedSport);
+    
+    navigate(`/turfs${params.toString() ? '?' + params.toString() : ''}`);
   };
 
   const featuredTurfs = [
@@ -100,48 +90,15 @@ const HeroSection = () => {
                 {t.description}
               </p>
 
-              {/* Search Bar */}
+              {/* Enhanced Search Bar */}
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-lg mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <Input
-                      type="text"
-                      placeholder={t.searchPlaceholder}
-                      value={searchQuery}
-                      onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setShowResults(e.target.value.length > 0);
-                      }}
-                      className="pl-10 h-12 border-gray-200 focus:border-green-500"
-                    />
-                    
-                    {/* Live Search Results */}
-                    {showResults && searchQuery && (
-                      <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-50">
-                        {filteredTurfs.length > 0 ? (
-                          filteredTurfs.map(turf => (
-                            <div 
-                              key={turf.id}
-                              className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
-                              onClick={() => {
-                                setSearchQuery(turf.name);
-                                setShowResults(false);
-                              }}
-                            >
-                              <div className="font-medium text-gray-900">{turf.name}</div>
-                              <div className="text-sm text-gray-500">{turf.location} • ৳{turf.price}/hr</div>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="p-3 text-gray-500">No turfs found</div>
-                        )}
-                      </div>
-                    )}
+                    <LiveSearch placeholder={t.searchPlaceholder} />
                   </div>
 
                   <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-                    <SelectTrigger className="h-12 border-gray-200">
+                    <SelectTrigger className="h-12 border-gray-200 focus:border-green-500">
                       <MapPin className="w-4 h-4 mr-2 text-gray-400" />
                       <SelectValue placeholder={t.location} />
                     </SelectTrigger>
@@ -155,7 +112,7 @@ const HeroSection = () => {
                   </Select>
 
                   <Select value={selectedSport} onValueChange={setSelectedSport}>
-                    <SelectTrigger className="h-12 border-gray-200">
+                    <SelectTrigger className="h-12 border-gray-200 focus:border-green-500">
                       <Users className="w-4 h-4 mr-2 text-gray-400" />
                       <SelectValue placeholder={t.sport} />
                     </SelectTrigger>
@@ -170,7 +127,7 @@ const HeroSection = () => {
 
                   <Button 
                     onClick={handleSearch}
-                    className="h-12 bg-green-500 hover:bg-green-600 text-white font-medium"
+                    className="h-12 bg-green-500 hover:bg-green-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     {t.search}
                   </Button>
