@@ -44,62 +44,50 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10">
+    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-xl">T</span>
             </div>
-            <span className="text-xl font-bold text-gradient">TurfMaster</span>
+            <span className="text-xl font-bold text-green-600">TURFI</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/turfs" className="text-white/80 hover:text-white transition-colors">
-              Browse Turfs
+            <Link to="/turfs" className="text-gray-700 hover:text-green-600 transition-colors font-medium">
+              Turf list
             </Link>
-            <Link to="/tournaments" className="text-white/80 hover:text-white transition-colors">
-              Tournaments
+            <Link to="/about" className="text-gray-700 hover:text-green-600 transition-colors font-medium">
+              About Us
             </Link>
-            <Link to="/community" className="text-white/80 hover:text-white transition-colors">
-              Community
+            <Link to="/tournaments" className="text-gray-700 hover:text-green-600 transition-colors font-medium">
+              List your turf
             </Link>
           </nav>
-
-          {/* Search Bar */}
-          <div className="hidden lg:flex items-center space-x-4 flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search turfs, tournaments..."
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-10 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </div>
 
           {/* Right Side */}
           <div className="flex items-center space-x-4">
             {/* Settings Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-white/80 hover:text-white">
+                <Button variant="ghost" size="sm" className="text-gray-700 hover:text-green-600">
                   <Settings className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="glass-card border-white/20">
+              <DropdownMenuContent align="end" className="bg-white border-gray-200">
                 <div className="px-3 py-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-white/80">Dark Mode</span>
+                    <span className="text-sm text-gray-700">Dark Mode</span>
                     <Switch checked={darkMode} onCheckedChange={toggleDarkMode} />
                   </div>
                 </div>
-                <DropdownMenuSeparator className="bg-white/20" />
+                <DropdownMenuSeparator className="bg-gray-200" />
                 <DropdownMenuItem 
                   onClick={toggleLanguage}
-                  className="text-white/80 hover:text-white"
+                  className="text-gray-700 hover:text-green-600"
                 >
                   {language === 'en' ? 'বাংলা' : 'English'}
                 </DropdownMenuItem>
@@ -113,29 +101,29 @@ const Header = () => {
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback className="bg-primary text-white">
+                      <AvatarFallback className="bg-green-600 text-white">
                         {user.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="glass-card border-white/20">
+                <DropdownMenuContent align="end" className="bg-white border-gray-200">
                   <div className="px-3 py-2">
-                    <p className="text-sm font-medium text-white">{user.name}</p>
-                    <p className="text-xs text-white/60">{user.email}</p>
-                    <p className="text-xs text-primary capitalize">{user.role.replace('_', ' ')}</p>
+                    <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                    <p className="text-xs text-green-600 capitalize">{user.role.replace('_', ' ')}</p>
                   </div>
-                  <DropdownMenuSeparator className="bg-white/20" />
+                  <DropdownMenuSeparator className="bg-gray-200" />
                   <DropdownMenuItem 
                     onClick={() => navigate(getDashboardRoute())}
-                    className="text-white/80 hover:text-white"
+                    className="text-gray-700 hover:text-green-600"
                   >
                     <User className="mr-2 h-4 w-4" />
                     Dashboard
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={handleLogout}
-                    className="text-white/80 hover:text-white"
+                    className="text-gray-700 hover:text-green-600"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
@@ -148,16 +136,16 @@ const Header = () => {
                   variant="ghost" 
                   size="sm"
                   onClick={() => navigate('/login')}
-                  className="text-white/80 hover:text-white hidden sm:inline-flex"
+                  className="text-gray-700 hover:text-green-600 hidden sm:inline-flex"
                 >
                   Login
                 </Button>
                 <Button 
                   size="sm"
                   onClick={() => navigate('/register')}
-                  className="gradient-primary hover:opacity-90 transition-opacity"
+                  className="bg-green-600 hover:bg-green-700 text-white"
                 >
-                  Sign Up
+                  Register
                 </Button>
               </div>
             )}
@@ -166,7 +154,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden text-white/80 hover:text-white"
+              className="md:hidden text-gray-700 hover:text-green-600"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -176,33 +164,33 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-white/10">
+          <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-2">
               <Link 
                 to="/turfs" 
-                className="text-white/80 hover:text-white transition-colors py-2"
+                className="text-gray-700 hover:text-green-600 transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Browse Turfs
+                Turf list
+              </Link>
+              <Link 
+                to="/about" 
+                className="text-gray-700 hover:text-green-600 transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About Us
               </Link>
               <Link 
                 to="/tournaments" 
-                className="text-white/80 hover:text-white transition-colors py-2"
+                className="text-gray-700 hover:text-green-600 transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Tournaments
-              </Link>
-              <Link 
-                to="/community" 
-                className="text-white/80 hover:text-white transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Community
+                List your turf
               </Link>
               {!user && (
                 <Link 
                   to="/login" 
-                  className="text-white/80 hover:text-white transition-colors py-2 sm:hidden"
+                  className="text-gray-700 hover:text-green-600 transition-colors py-2 sm:hidden"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login

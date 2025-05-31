@@ -13,7 +13,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false); // Default to light mode
   const [language, setLanguage] = useState<'en' | 'bn'>('en');
   const [location, setLocationState] = useState('Dhaka');
 
