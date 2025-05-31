@@ -2,6 +2,7 @@
 import React from 'react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,11 +18,13 @@ import {
   Zap,
   Play,
   Search,
-  MessageCircle
+  MessageCircle,
+  Home
 } from 'lucide-react';
 
 const PlayerDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const stats = [
     { 
@@ -30,7 +33,7 @@ const PlayerDashboard = () => {
       change: '+12%', 
       icon: TrendingUp, 
       color: 'text-green-600',
-      bgColor: 'bg-green-50'
+      bgColor: 'bg-gradient-to-br from-green-50 to-green-100'
     },
     { 
       label: 'Matches Won', 
@@ -38,7 +41,7 @@ const PlayerDashboard = () => {
       change: '+5', 
       icon: Trophy, 
       color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      bgColor: 'bg-gradient-to-br from-blue-50 to-blue-100'
     },
     { 
       label: 'Total Matches', 
@@ -46,7 +49,7 @@ const PlayerDashboard = () => {
       change: '+3', 
       icon: Target, 
       color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+      bgColor: 'bg-gradient-to-br from-purple-50 to-purple-100'
     },
     { 
       label: 'This Week', 
@@ -54,7 +57,7 @@ const PlayerDashboard = () => {
       change: 'matches', 
       icon: Calendar, 
       color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
+      bgColor: 'bg-gradient-to-br from-orange-50 to-orange-100'
     }
   ];
 
@@ -63,29 +66,29 @@ const PlayerDashboard = () => {
       icon: MapPin, 
       label: 'Find Turfs', 
       description: 'Discover nearby turfs',
-      color: 'bg-green-500',
-      action: () => window.location.href = '/turfs'
+      color: 'bg-gradient-to-r from-green-500 to-green-600',
+      action: () => navigate('/turfs')
     },
     { 
       icon: Search, 
       label: 'Matchmaking', 
       description: 'Find players to play with',
-      color: 'bg-blue-500',
-      action: () => window.location.href = '/player/matchmaking'
+      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+      action: () => navigate('/player/matchmaking')
     },
     { 
       icon: Trophy, 
       label: 'Tournaments', 
       description: 'Join competitions',
-      color: 'bg-purple-500',
-      action: () => window.location.href = '/tournaments'
+      color: 'bg-gradient-to-r from-purple-500 to-purple-600',
+      action: () => navigate('/tournaments')
     },
     { 
       icon: Users, 
       label: 'Create Team', 
       description: 'Build your squad',
-      color: 'bg-orange-500',
-      action: () => window.location.href = '/player/teams/create'
+      color: 'bg-gradient-to-r from-orange-500 to-orange-600',
+      action: () => navigate('/player/teams/create')
     }
   ];
 
@@ -130,44 +133,64 @@ const PlayerDashboard = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <DashboardSidebar />
       
       <div className="flex-1 overflow-auto">
         <div className="p-6">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Good evening, {user?.name?.split(' ')[0] || 'Player'}! 👋
-              </h1>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Good evening, {user?.name?.split(' ')[0] || 'Player'}! 👋
+                </h1>
+                <p className="text-gray-600 mt-2">Ready to dominate the field? Let's get started!</p>
+              </div>
               <div className="flex items-center space-x-3">
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate('/')}
+                  className="hover:bg-green-50 hover:border-green-500 transition-all duration-300"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Home
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate('/player/messages')}
+                  className="hover:bg-blue-50 hover:border-blue-500 transition-all duration-300"
+                >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Messages
                 </Button>
-                <Button size="sm" className="bg-green-500 hover:bg-green-600">
+                <Button 
+                  size="sm" 
+                  onClick={() => navigate('/turfs')}
+                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
                   <Play className="w-4 h-4 mr-2" />
                   Quick Book
                 </Button>
               </div>
             </div>
-            <p className="text-gray-600">Ready to dominate the field? Let's get started!</p>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, index) => (
-              <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
                       <p className={`text-sm ${stat.color} font-medium`}>{stat.change}</p>
                     </div>
-                    <div className={`p-3 rounded-full ${stat.bgColor}`}>
-                      <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                    <div className={`p-4 rounded-2xl ${stat.bgColor} shadow-lg`}>
+                      <stat.icon className={`w-8 h-8 ${stat.color}`} />
                     </div>
                   </div>
                 </CardContent>
@@ -176,28 +199,28 @@ const PlayerDashboard = () => {
           </div>
 
           {/* Quick Actions */}
-          <Card className="mb-8 border-0 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-green-500" />
+          <Card className="mb-8 border-0 shadow-lg overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Zap className="w-6 h-6 text-green-500" />
                 Quick Actions
               </CardTitle>
               <CardDescription>Get started with your next game</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {quickActions.map((action, index) => (
                   <Button
                     key={index}
                     variant="outline"
-                    className="h-auto p-6 flex flex-col items-center space-y-3 hover:shadow-md transition-shadow"
+                    className="h-auto p-6 flex flex-col items-center space-y-4 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-green-500 group"
                     onClick={action.action}
                   >
-                    <div className={`p-3 rounded-full ${action.color} text-white`}>
-                      <action.icon className="w-6 h-6" />
+                    <div className={`p-4 rounded-2xl ${action.color} text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                      <action.icon className="w-8 h-8" />
                     </div>
                     <div className="text-center">
-                      <p className="font-medium text-gray-900">{action.label}</p>
+                      <p className="font-semibold text-gray-900 mb-1">{action.label}</p>
                       <p className="text-sm text-gray-500">{action.description}</p>
                     </div>
                   </Button>
@@ -208,19 +231,29 @@ const PlayerDashboard = () => {
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Upcoming Bookings */}
-            <Card className="border-0 shadow-sm">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Upcoming Bookings</CardTitle>
-                  <CardDescription>Your scheduled matches</CardDescription>
+            <Card className="border-0 shadow-lg overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-blue-500" />
+                      Upcoming Bookings
+                    </CardTitle>
+                    <CardDescription>Your scheduled matches</CardDescription>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-blue-600 hover:bg-blue-100 transition-all duration-300"
+                    onClick={() => navigate('/player/bookings')}
+                  >
+                    View All
+                  </Button>
                 </div>
-                <Button variant="ghost" size="sm" className="text-green-600">
-                  View All
-                </Button>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-6 space-y-4">
                 {upcomingBookings.map((booking) => (
-                  <div key={booking.id} className="p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div key={booking.id} className="p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 hover:from-green-50 hover:to-blue-50 transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-green-500">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-semibold text-gray-900">{booking.venue}</h3>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -241,8 +274,8 @@ const PlayerDashboard = () => {
                         <span>{booking.location}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-green-600">৳{booking.price}</span>
-                        <Button size="sm" variant="outline" className="text-xs">
+                        <span className="font-semibold text-green-600">৳{booking.price}</span>
+                        <Button size="sm" variant="outline" className="text-xs hover:bg-green-50 transition-all duration-300">
                           View Details
                         </Button>
                       </div>
@@ -254,30 +287,40 @@ const PlayerDashboard = () => {
                   <div className="text-center py-8 text-gray-500">
                     <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
                     <p>No upcoming bookings</p>
-                    <Button className="mt-3" size="sm">Book a Turf</Button>
+                    <Button className="mt-3" size="sm" onClick={() => navigate('/turfs')}>Book a Turf</Button>
                   </div>
                 )}
               </CardContent>
             </Card>
 
             {/* My Teams */}
-            <Card className="border-0 shadow-sm">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>My Teams</CardTitle>
-                  <CardDescription>Teams you're part of</CardDescription>
+            <Card className="border-0 shadow-lg overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-orange-50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="w-5 h-5 text-purple-500" />
+                      My Teams
+                    </CardTitle>
+                    <CardDescription>Teams you're part of</CardDescription>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-purple-600 hover:bg-purple-100 transition-all duration-300"
+                    onClick={() => navigate('/player/teams')}
+                  >
+                    View All
+                  </Button>
                 </div>
-                <Button variant="ghost" size="sm" className="text-green-600">
-                  View All
-                </Button>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-6 space-y-4">
                 {myTeams.map((team) => (
-                  <div key={team.id} className="p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div key={team.id} className="p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 hover:from-purple-50 hover:to-orange-50 transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-purple-500">
                     <div className="flex items-center space-x-4">
-                      <Avatar className="h-12 w-12">
+                      <Avatar className="h-14 w-14 ring-2 ring-purple-500 ring-offset-2">
                         <AvatarImage src={team.avatar} alt={team.name} />
-                        <AvatarFallback className="bg-green-500 text-white">
+                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-orange-500 text-white font-bold">
                           {team.name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
@@ -308,7 +351,7 @@ const PlayerDashboard = () => {
                   <div className="text-center py-8 text-gray-500">
                     <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
                     <p>You're not part of any teams yet</p>
-                    <Button className="mt-3" size="sm">Create Team</Button>
+                    <Button className="mt-3" size="sm" onClick={() => navigate('/player/teams/create')}>Create Team</Button>
                   </div>
                 )}
               </CardContent>

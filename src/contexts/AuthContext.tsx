@@ -14,6 +14,7 @@ export interface User {
   turfName?: string;
   turfLocation?: string;
   avatar?: string;
+  isAuthenticated: boolean;
 }
 
 interface AuthContextType {
@@ -22,11 +23,12 @@ interface AuthContextType {
   register: (userData: any) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Demo credentials
+// Demo credentials with enhanced data
 const demoCredentials = {
   'superadmin@example.com': {
     password: 'admin123',
@@ -35,7 +37,8 @@ const demoCredentials = {
       email: 'superadmin@example.com',
       name: 'Super Admin',
       role: 'superadmin' as UserRole,
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+      isAuthenticated: true
     }
   },
   'admin@example.com': {
@@ -45,7 +48,8 @@ const demoCredentials = {
       email: 'admin@example.com',
       name: 'Admin User',
       role: 'admin' as UserRole,
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+      isAuthenticated: true
     }
   },
   'turf@example.com': {
@@ -58,7 +62,8 @@ const demoCredentials = {
       turfName: 'Green Field Sports',
       turfLocation: 'Dhaka, Bangladesh',
       phone: '+880171234567',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face'
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face',
+      isAuthenticated: true
     }
   },
   'player@example.com': {
@@ -71,7 +76,8 @@ const demoCredentials = {
       city: 'Dhaka',
       age: 25,
       phone: '+880187654321',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face'
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
+      isAuthenticated: true
     }
   }
 };
@@ -81,9 +87,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    // Check for existing session on app load
+    const savedUser = localStorage.getItem('turfmaster_user');
+    const sessionExpiry = localStorage.getItem('turfmaster_session_expiry');
+    
+    if (savedUser && sessionExpiry) {
+      const expiryTime = new Date(sessionExpiry);
+      const currentTime = new Date();
+      
+      if (currentTime < expiryTime) {
+        const userData = JSON.parse(savedUser);
+        userData.isAuthenticated = true;
+        setUser(userData);
+      } else {
+        // Session expired, clear storage
+        localStorage.removeItem('turfmaster_user');
+        localStorage.removeItem('turfmaster_session_expiry');
+      }
     }
     setIsLoading(false);
   }, []);
@@ -97,8 +117,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const credentials = demoCredentials[email as keyof typeof demoCredentials];
     
     if (credentials && credentials.password === password) {
-      setUser(credentials.user);
-      localStorage.setItem('user', JSON.stringify(credentials.user));
+      const userData = { ...credentials.user, isAuthenticated: true };
+      setUser(userData);
+      
+      // Set session with 24 hour expiry
+      const expiryTime = new Date();
+      expiryTime.setTime(expiryTime.getTime() + (24 * 60 * 60 * 1000));
+      
+      localStorage.setItem('turfmaster_user', JSON.stringify(userData));
+      localStorage.setItem('turfmaster_session_expiry', expiryTime.toISOString());
+      
       setIsLoading(false);
       return true;
     }
@@ -118,22 +146,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email: userData.email,
       name: userData.name,
       role: userData.role || 'player',
+      isAuthenticated: true,
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
       ...userData
     };
     
     setUser(newUser);
-    localStorage.setItem('user', JSON.stringify(newUser));
+    
+    // Set session with 24 hour expiry
+    const expiryTime = new Date();
+    expiryTime.setTime(expiryTime.getTime() + (24 * 60 * 60 * 1000));
+    
+    localStorage.setItem('turfmaster_user', JSON.stringify(newUser));
+    localStorage.setItem('turfmaster_session_expiry', expiryTime.toISOString());
+    
     setIsLoading(false);
     return true;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem('turfmaster_user');
+    localStorage.removeItem('turfmaster_session_expiry');
+  };
+
+  const updateUser = (userData: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+      localStorage.setItem('turfmaster_user', JSON.stringify(updatedUser));
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      register, 
+      logout, 
+      isLoading, 
+      updateUser 
+    }}>
       {children}
     </AuthContext.Provider>
   );
