@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -51,24 +50,21 @@ const Index = () => {
         citiesLabel: 'Cities Covered'
       },
       featured: {
-        title: 'Turning Dreams into Addresses',
-        subtitle: 'Discover premium turfs that match your playing style and budget.',
-        viewAll: 'View All Properties'
+        title: 'Premium Turfs & Venues',
+        subtitle: 'Discover top-rated sports facilities in your area',
+        viewAll: 'View All Turfs'
       },
       explore: {
-        title: 'Explore the Best of Every Neighborhood',
-        subtitle: 'Find the perfect turf in your area with our interactive map.'
+        title: 'Explore the Best Sports Venues',
+        subtitle: 'Find premium turfs and facilities near you'
       },
       properties: {
-        title: 'Find The Right Property For You More Faster',
-        subtitle: 'We provide everything you need to find the perfect turf.'
-      },
-      testimonials: {
-        title: 'What Our Clients Say About Us'
+        title: 'Find The Perfect Turf',
+        subtitle: 'We provide everything you need for your game'
       },
       newsletter: {
-        title: 'Subscribe to Newest Property Newsletter',
-        placeholder: 'Your email'
+        title: 'Stay Updated with Latest Venues',
+        placeholder: 'Enter your email'
       }
     },
     bn: {
@@ -79,6 +75,33 @@ const Index = () => {
         searchPlaceholder: 'অবস্থান, টার্ফের নাম অনুসন্ধান করুন...',
         bookNow: 'এখনই বুক করুন',
         explore: 'টার্ফ অন্বেষণ করুন'
+      },
+      stats: {
+        satisfaction: '১০০%',
+        satisfactionLabel: 'গ্রাহক সন্তুষ্টি',
+        turfs: '৬০০+',
+        turfsLabel: 'প্রিমিয়াম টার্ফ',
+        bookings: '১৫০+',
+        bookingsLabel: 'দৈনিক বুকিং',
+        cities: '৫০+',
+        citiesLabel: 'শহর কভার'
+      },
+      featured: {
+        title: 'প্রিমিয়াম টার্ফ ও ভেন্যু',
+        subtitle: 'আপনার এলাকায় শীর্ষ রেটেড খেলার সুবিধা আবিষ্কার করুন',
+        viewAll: 'সব টার্ফ দেখুন'
+      },
+      explore: {
+        title: 'সেরা খেলার ভেন্যু অন্বেষণ করুন',
+        subtitle: 'আপনার কাছাকাছি প্রিমিয়াম টার্ফ এবং সুবিধা খুঁজুন'
+      },
+      properties: {
+        title: 'নিখুঁত টার্ফ খুঁজুন',
+        subtitle: 'আপনার খেলার জন্য প্রয়োজনীয় সবকিছু আমরা প্রদান করি'
+      },
+      newsletter: {
+        title: 'সর্বশেষ ভেন্যুর আপডেট পান',
+        placeholder: 'আপনার ইমেইল দিন'
       }
     }
   };
@@ -257,20 +280,20 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats?.satisfaction || '100%'}</div>
-              <div className="text-gray-600">{t.stats?.satisfactionLabel || 'Customer Satisfaction'}</div>
+              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats.satisfaction}</div>
+              <div className="text-gray-600">{t.stats.satisfactionLabel}</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats?.turfs || '600+'}</div>
-              <div className="text-gray-600">{t.stats?.turfsLabel || 'Premium Turfs'}</div>
+              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats.turfs}</div>
+              <div className="text-gray-600">{t.stats.turfsLabel}</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats?.bookings || '150+'}</div>
-              <div className="text-gray-600">{t.stats?.bookingsLabel || 'Daily Bookings'}</div>
+              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats.bookings}</div>
+              <div className="text-gray-600">{t.stats.bookingsLabel}</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats?.cities || '50+'}</div>
-              <div className="text-gray-600">{t.stats?.citiesLabel || 'Cities Covered'}</div>
+              <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">{t.stats.cities}</div>
+              <div className="text-gray-600">{t.stats.citiesLabel}</div>
             </div>
           </div>
         </div>
@@ -282,10 +305,10 @@ const Index = () => {
           <div className="flex items-center justify-between mb-12">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                {t.featured?.title || 'Turning Dreams into Addresses'}
+                {t.featured.title}
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl">
-                {t.featured?.subtitle || 'Discover premium turfs that match your playing style and budget.'}
+                {t.featured.subtitle}
               </p>
             </div>
             <Button 
@@ -293,7 +316,7 @@ const Index = () => {
               className="hidden md:flex items-center gap-2"
               onClick={() => navigate('/turfs')}
             >
-              {t.featured?.viewAll || 'View All Properties'}
+              {t.featured.viewAll}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
@@ -359,10 +382,10 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                {t.explore?.title || 'Explore the Best of Every Neighborhood'}
+                {t.explore.title}
               </h2>
               <p className="text-xl text-gray-600 mb-8">
-                {t.explore?.subtitle || 'Find the perfect turf in your area with our interactive map.'}
+                {t.explore.subtitle}
               </p>
               <Button 
                 size="lg" 
@@ -390,10 +413,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              {t.properties?.title || 'Find The Right Property For You More Faster'}
+              {t.properties.title}
             </h2>
             <p className="text-xl text-gray-600">
-              {t.properties?.subtitle || 'We provide everything you need to find the perfect turf.'}
+              {t.properties.subtitle}
             </p>
           </div>
 
@@ -539,14 +562,14 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-4">
-              {t.newsletter?.title || 'Subscribe to Newest Property Newsletter'}
+              {t.newsletter.title}
             </h2>
             <p className="text-xl text-gray-300 mb-8">
               Get the latest updates on new turfs and tournaments
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <Input 
-                placeholder={t.newsletter?.placeholder || 'Your email'}
+                placeholder={t.newsletter.placeholder}
                 className="bg-white/10 border-white/20 text-white placeholder:text-gray-300"
               />
               <Button className="bg-green-600 hover:bg-green-700">
