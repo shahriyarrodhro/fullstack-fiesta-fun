@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
@@ -123,8 +122,8 @@ const PlayerMatchmaking = () => {
   const filteredPlayers = nearbyPlayers.filter(player => {
     const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          player.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSport = !selectedSport || player.sport.toLowerCase() === selectedSport.toLowerCase();
-    const matchesLocation = !selectedLocation || player.location.toLowerCase().includes(selectedLocation.toLowerCase());
+    const matchesSport = !selectedSport || selectedSport === 'all' || player.sport.toLowerCase() === selectedSport.toLowerCase();
+    const matchesLocation = !selectedLocation || selectedLocation === 'all' || player.location.toLowerCase().includes(selectedLocation.toLowerCase());
     return matchesSearch && matchesSport && matchesLocation;
   });
 
@@ -184,7 +183,7 @@ const PlayerMatchmaking = () => {
                     <SelectValue placeholder="Select Sport" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Sports</SelectItem>
+                    <SelectItem value="all">All Sports</SelectItem>
                     <SelectItem value="football">Football</SelectItem>
                     <SelectItem value="cricket">Cricket</SelectItem>
                     <SelectItem value="tennis">Tennis</SelectItem>
@@ -196,7 +195,7 @@ const PlayerMatchmaking = () => {
                     <SelectValue placeholder="Select Location" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Areas</SelectItem>
+                    <SelectItem value="all">All Areas</SelectItem>
                     <SelectItem value="gulshan">Gulshan</SelectItem>
                     <SelectItem value="dhanmondi">Dhanmondi</SelectItem>
                     <SelectItem value="banani">Banani</SelectItem>
