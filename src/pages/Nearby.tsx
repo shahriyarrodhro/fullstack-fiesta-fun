@@ -26,7 +26,7 @@ const Nearby = () => {
   const [currentCity, setCurrentCity] = useState<string>('');
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSport, setSelectedSport] = useState('');
+  const [selectedSport, setSelectedSport] = useState('all');
   const [sortBy, setSortBy] = useState('distance');
 
   // Extended demo turfs with more cities and variety
@@ -179,26 +179,26 @@ const Nearby = () => {
         });
 
         // Mock city detection based on coordinates
-        // In real app, you'd use reverse geocoding API
         const { latitude, longitude } = position.coords;
+        console.log('Current location:', { latitude, longitude });
         
-        // Mock city detection logic
         let detectedCity = 'Dhaka'; // Default
         
-        // Simple mock coordinates for demo
-        if (latitude > 23.8 && latitude < 23.9 && longitude > 90.3 && longitude < 90.5) {
+        // Mock city detection logic
+        if (latitude > 23.7 && latitude < 23.9 && longitude > 90.3 && longitude < 90.5) {
           detectedCity = 'Dhaka';
-        } else if (latitude > 22.3 && latitude < 22.4 && longitude > 91.7 && longitude < 91.9) {
+        } else if (latitude > 22.2 && latitude < 22.5 && longitude > 91.7 && longitude < 91.9) {
           detectedCity = 'Chittagong';
-        } else if (latitude > 24.8 && latitude < 24.9 && longitude > 91.8 && longitude < 91.9) {
+        } else if (latitude > 24.8 && latitude < 25.0 && longitude > 91.8 && longitude < 92.0) {
           detectedCity = 'Sylhet';
-        } else if (latitude > 22.8 && latitude < 22.9 && longitude > 89.5 && longitude < 89.6) {
+        } else if (latitude > 22.7 && latitude < 23.0 && longitude > 89.4 && longitude < 89.7) {
           detectedCity = 'Khulna';
         }
         
+        console.log('Detected city:', detectedCity);
         setCurrentCity(detectedCity);
       } else {
-        // Fallback if geolocation not supported
+        console.log('Geolocation not supported, using default city');
         setCurrentCity('Dhaka');
       }
     } catch (error) {
@@ -216,7 +216,7 @@ const Nearby = () => {
     .filter(turf => {
       const matchesSearch = turf.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            turf.location.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesSport = !selectedSport || turf.type.toLowerCase() === selectedSport.toLowerCase();
+      const matchesSport = selectedSport === 'all' || turf.type.toLowerCase() === selectedSport.toLowerCase();
       return matchesSearch && matchesSport;
     })
     .sort((a, b) => {
@@ -237,6 +237,7 @@ const Nearby = () => {
     });
 
   const handleCityChange = (city: string) => {
+    console.log('City changed to:', city);
     setCurrentCity(city);
   };
 
@@ -338,7 +339,7 @@ const Nearby = () => {
                     <SelectValue placeholder="All Sports" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Sports</SelectItem>
+                    <SelectItem value="all">All Sports</SelectItem>
                     <SelectItem value="football">Football</SelectItem>
                     <SelectItem value="cricket">Cricket</SelectItem>
                     <SelectItem value="basketball">Basketball</SelectItem>

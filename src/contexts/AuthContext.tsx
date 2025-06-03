@@ -33,12 +33,13 @@ interface Booking {
   turfName: string;
   date: string;
   timeSlot: string;
-  status: 'pending' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   paymentStatus: 'unpaid' | 'paid' | 'refunded';
   totalAmount: number;
   playerName: string;
   playerEmail: string;
   playerPhone: string;
+  createdAt: string;
 }
 
 interface AuthContextType {
@@ -68,24 +69,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Load user from localStorage on mount
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      setUser(userData);
-      loadUserTeams(userData.id);
-      loadUserBookings(userData.id);
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        loadUserTeams(userData.id);
+        loadUserBookings(userData.id);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        localStorage.removeItem('currentUser');
+      }
     }
   }, []);
 
   const loadUserTeams = (userId: string) => {
-    const savedTeams = localStorage.getItem(`teams_${userId}`);
-    if (savedTeams) {
-      setTeams(JSON.parse(savedTeams));
+    try {
+      const savedTeams = localStorage.getItem(`teams_${userId}`);
+      if (savedTeams) {
+        setTeams(JSON.parse(savedTeams));
+      }
+    } catch (error) {
+      console.error('Error loading teams:', error);
     }
   };
 
   const loadUserBookings = (userId: string) => {
-    const savedBookings = localStorage.getItem(`bookings_${userId}`);
-    if (savedBookings) {
-      setBookings(JSON.parse(savedBookings));
+    try {
+      const savedBookings = localStorage.getItem(`bookings_${userId}`);
+      if (savedBookings) {
+        const parsedBookings = JSON.parse(savedBookings);
+        console.log('Loaded bookings for user:', userId, parsedBookings);
+        setBookings(parsedBookings);
+      }
+    } catch (error) {
+      console.error('Error loading bookings:', error);
     }
   };
 
@@ -94,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(true);
       // Mock login logic
       const mockUser: User = {
-        id: '1',
+        id: Math.random().toString(36).substr(2, 9),
         name: 'John Doe',
         email: email,
         phone: '+8801234567890',
@@ -194,6 +210,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTeams(updatedTeams);
     localStorage.setItem(`teams_${user.id}`, JSON.stringify(updatedTeams));
     
+    console.log('Team created:', newTeam);
     return newTeam.id;
   };
 
@@ -211,12 +228,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       totalAmount: bookingData.totalAmount,
       playerName: user.name,
       playerEmail: user.email,
-      playerPhone: user.phone || ''
+      playerPhone: user.phone || '',
+      createdAt: new Date().toISOString()
     };
 
     const updatedBookings = [...bookings, newBooking];
     setBookings(updatedBookings);
     localStorage.setItem(`bookings_${user.id}`, JSON.stringify(updatedBookings));
+    
+    console.log('Booking added:', newBooking);
+    console.log('Current bookings:', updatedBookings);
   };
 
   const updateBookingStatus = (bookingId: string, status: string, paymentStatus?: string) => {
@@ -229,6 +250,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user) {
       localStorage.setItem(`bookings_${user.id}`, JSON.stringify(updatedBookings));
     }
+    console.log('Booking status updated:', { bookingId, status, paymentStatus });
   };
 
   return (
