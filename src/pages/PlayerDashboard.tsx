@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -137,7 +136,7 @@ const PlayerDashboard = () => {
       <DashboardSidebar />
       
       <div className="flex-1 overflow-auto">
-        <div className="p-6">
+        <div className="p-6 pt-20 md:pt-6">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
@@ -155,7 +154,7 @@ const PlayerDashboard = () => {
                   className="hover:bg-green-50 hover:border-green-500 transition-all duration-300"
                 >
                   <Home className="w-4 h-4 mr-2" />
-                  Home
+                  <span className="hidden sm:inline">Home</span>
                 </Button>
                 <Button 
                   variant="outline" 
@@ -164,7 +163,7 @@ const PlayerDashboard = () => {
                   className="hover:bg-blue-50 hover:border-blue-500 transition-all duration-300"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Messages
+                  <span className="hidden sm:inline">Messages</span>
                 </Button>
                 <Button 
                   size="sm" 
@@ -172,25 +171,26 @@ const PlayerDashboard = () => {
                   className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   <Play className="w-4 h-4 mr-2" />
-                  Quick Book
+                  <span className="hidden sm:inline">Quick Book</span>
+                  <span className="sm:hidden">Book</span>
                 </Button>
               </div>
             </div>
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
             {stats.map((stat, index) => (
               <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-                <CardContent className="p-6">
+                <CardContent className="p-4 lg:p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                      <p className={`text-sm ${stat.color} font-medium`}>{stat.change}</p>
+                      <p className="text-xs lg:text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
+                      <p className="text-xl lg:text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
+                      <p className={`text-xs lg:text-sm ${stat.color} font-medium`}>{stat.change}</p>
                     </div>
-                    <div className={`p-4 rounded-2xl ${stat.bgColor} shadow-lg`}>
-                      <stat.icon className={`w-8 h-8 ${stat.color}`} />
+                    <div className={`p-2 lg:p-4 rounded-2xl ${stat.bgColor} shadow-lg`}>
+                      <stat.icon className={`w-5 h-5 lg:w-8 lg:h-8 ${stat.color}`} />
                     </div>
                   </div>
                 </CardContent>
@@ -201,27 +201,27 @@ const PlayerDashboard = () => {
           {/* Quick Actions */}
           <Card className="mb-8 border-0 shadow-lg overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Zap className="w-6 h-6 text-green-500" />
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                <Zap className="w-5 h-5 lg:w-6 lg:h-6 text-green-500" />
                 Quick Actions
               </CardTitle>
               <CardDescription>Get started with your next game</CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <CardContent className="p-4 lg:p-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 {quickActions.map((action, index) => (
                   <Button
                     key={index}
                     variant="outline"
-                    className="h-auto p-6 flex flex-col items-center space-y-4 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-green-500 group"
+                    className="h-auto p-4 lg:p-6 flex flex-col items-center space-y-3 lg:space-y-4 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-green-500 group"
                     onClick={action.action}
                   >
-                    <div className={`p-4 rounded-2xl ${action.color} text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
-                      <action.icon className="w-8 h-8" />
+                    <div className={`p-3 lg:p-4 rounded-2xl ${action.color} text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                      <action.icon className="w-6 h-6 lg:w-8 lg:h-8" />
                     </div>
                     <div className="text-center">
-                      <p className="font-semibold text-gray-900 mb-1">{action.label}</p>
-                      <p className="text-sm text-gray-500">{action.description}</p>
+                      <p className="font-semibold text-gray-900 mb-1 text-sm lg:text-base">{action.label}</p>
+                      <p className="text-xs lg:text-sm text-gray-500 hidden lg:block">{action.description}</p>
                     </div>
                   </Button>
                 ))}
@@ -229,14 +229,14 @@ const PlayerDashboard = () => {
             </CardContent>
           </Card>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Upcoming Bookings */}
             <Card className="border-0 shadow-lg overflow-hidden">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-blue-500" />
+                    <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                      <Calendar className="w-4 h-4 lg:w-5 lg:h-5 text-blue-500" />
                       Upcoming Bookings
                     </CardTitle>
                     <CardDescription>Your scheduled matches</CardDescription>
@@ -251,12 +251,12 @@ const PlayerDashboard = () => {
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-4 lg:p-6 space-y-4">
                 {upcomingBookings.map((booking) => (
-                  <div key={booking.id} className="p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 hover:from-green-50 hover:to-blue-50 transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-green-500">
+                  <div key={booking.id} className="p-3 lg:p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 hover:from-green-50 hover:to-blue-50 transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-green-500">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-gray-900">{booking.venue}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      <h3 className="font-semibold text-gray-900 text-sm lg:text-base">{booking.venue}</h3>
+                      <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-medium ${
                         booking.status === 'confirmed' 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-yellow-100 text-yellow-800'
@@ -264,13 +264,13 @@ const PlayerDashboard = () => {
                         {booking.status}
                       </span>
                     </div>
-                    <div className="space-y-2 text-sm text-gray-600">
+                    <div className="space-y-2 text-xs lg:text-sm text-gray-600">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-3 h-3 lg:w-4 lg:h-4" />
                         <span>{booking.date} • {booking.time}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
+                        <MapPin className="w-3 h-3 lg:w-4 lg:h-4" />
                         <span>{booking.location}</span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -298,8 +298,8 @@ const PlayerDashboard = () => {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-orange-50">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Users className="w-5 h-5 text-purple-500" />
+                    <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                      <Users className="w-4 h-4 lg:w-5 lg:h-5 text-purple-500" />
                       My Teams
                     </CardTitle>
                     <CardDescription>Teams you're part of</CardDescription>
@@ -314,11 +314,11 @@ const PlayerDashboard = () => {
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-4 lg:p-6 space-y-4">
                 {myTeams.map((team) => (
-                  <div key={team.id} className="p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 hover:from-purple-50 hover:to-orange-50 transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-purple-500">
-                    <div className="flex items-center space-x-4">
-                      <Avatar className="h-14 w-14 ring-2 ring-purple-500 ring-offset-2">
+                  <div key={team.id} className="p-3 lg:p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 hover:from-purple-50 hover:to-orange-50 transition-all duration-300 transform hover:-translate-y-1 border-2 hover:border-purple-500">
+                    <div className="flex items-center space-x-3 lg:space-x-4">
+                      <Avatar className="h-10 w-10 lg:h-14 lg:w-14 ring-2 ring-purple-500 ring-offset-2">
                         <AvatarImage src={team.avatar} alt={team.name} />
                         <AvatarFallback className="bg-gradient-to-br from-purple-500 to-orange-500 text-white font-bold">
                           {team.name.charAt(0)}
@@ -326,7 +326,7 @@ const PlayerDashboard = () => {
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h3 className="font-semibold text-gray-900">{team.name}</h3>
+                          <h3 className="font-semibold text-gray-900 text-sm lg:text-base">{team.name}</h3>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             team.role === 'Captain' 
                               ? 'bg-yellow-100 text-yellow-800' 
@@ -335,9 +335,9 @@ const PlayerDashboard = () => {
                             {team.role}
                           </span>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-4 text-xs lg:text-sm text-gray-600">
                           <span className="flex items-center gap-1">
-                            <Users className="w-4 h-4" />
+                            <Users className="w-3 h-3 lg:w-4 lg:h-4" />
                             {team.members} members
                           </span>
                           <span className="text-green-600 font-medium">{team.record}</span>

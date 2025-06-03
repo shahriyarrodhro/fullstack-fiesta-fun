@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { 
   Home, 
   Calendar, 
@@ -19,13 +20,16 @@ import {
   Search,
   BarChart3,
   Shield,
-  Building2
+  Building2,
+  Menu,
+  X
 } from 'lucide-react';
 
 const DashboardSidebar = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -94,8 +98,8 @@ const DashboardSidebar = () => {
 
   const sidebarItems = getMenuItems();
 
-  return (
-    <div className="w-64 bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 h-screen flex flex-col shadow-lg">
+  const SidebarContent = () => (
+    <>
       {/* Header */}
       <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-blue-50">
         <Link to="/" className="flex items-center space-x-3 group">
@@ -142,6 +146,7 @@ const DashboardSidebar = () => {
                 ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg transform scale-105'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:shadow-md'
             }`}
+            onClick={() => setIsOpen(false)}
           >
             <item.icon className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110 ${
               item.active ? 'text-white' : 'text-green-600'
@@ -159,6 +164,7 @@ const DashboardSidebar = () => {
         <Link
           to="/settings"
           className="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 transition-all duration-300 group"
+          onClick={() => setIsOpen(false)}
         >
           <Settings className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform duration-300" />
           <span>Settings</span>
@@ -173,7 +179,36 @@ const DashboardSidebar = () => {
           Logout
         </Button>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Trigger Button */}
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="bg-white/90 backdrop-blur-md shadow-lg border-gray-200 hover:bg-white/95"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64">
+            <div className="h-full bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 flex flex-col">
+              <SidebarContent />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex w-64 bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 h-screen flex-col shadow-lg">
+        <SidebarContent />
+      </div>
+    </>
   );
 };
 
