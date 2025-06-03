@@ -8,6 +8,7 @@ interface User {
   email: string;
   phone?: string;
   city?: string;
+  age?: number;
   role: 'player' | 'turf_owner' | 'admin' | 'super_admin';
   avatar?: string;
   isAuthenticated: boolean;
@@ -44,6 +45,7 @@ interface AuthContextType {
   user: User | null;
   teams: Team[];
   bookings: Booking[];
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (userData: any) => Promise<boolean>;
   logout: () => void;
@@ -60,6 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Load user from localStorage on mount
@@ -88,6 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
+      setIsLoading(true);
       // Mock login logic
       const mockUser: User = {
         id: '1',
@@ -95,6 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: email,
         phone: '+8801234567890',
         city: 'Dhaka',
+        age: 25,
         role: email.includes('admin') ? 'admin' : email.includes('super') ? 'super_admin' : email.includes('owner') ? 'turf_owner' : 'player',
         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop',
         isAuthenticated: true
@@ -116,17 +121,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Login error:', error);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const register = async (userData: any): Promise<boolean> => {
     try {
+      setIsLoading(true);
       const newUser: User = {
         id: Math.random().toString(36).substr(2, 9),
         name: userData.name,
         email: userData.email,
         phone: userData.phone,
         city: userData.city,
+        age: userData.age ? parseInt(userData.age) : undefined,
         role: 'player',
         isAuthenticated: true
       };
@@ -137,6 +146,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Registration error:', error);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -225,6 +236,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       teams,
       bookings,
+      isLoading,
       login,
       register,
       logout,

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -29,14 +28,14 @@ const Header = () => {
     if (!user) return '/';
     
     switch (user.role) {
-      case 'superadmin':
-        return '/superadmin';
+      case 'super_admin':
+        return '/super-admin/dashboard';
       case 'admin':
-        return '/admin';
+        return '/admin/dashboard';
       case 'turf_owner':
-        return '/turf-owner';
+        return '/turf-owner/dashboard';
       case 'player':
-        return '/player';
+        return '/player/dashboard';
       default:
         return '/';
     }
