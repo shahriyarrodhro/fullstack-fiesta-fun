@@ -39,7 +39,7 @@ const PlayerSettings = () => {
     email: user?.email || '',
     phone: user?.phone || '',
     city: user?.city || '',
-    age: user?.age || '',
+    age: user?.age?.toString() || '',
     bio: '',
     avatar: user?.avatar || '',
     notifications: {
@@ -54,18 +54,18 @@ const PlayerSettings = () => {
     }
   });
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const handleNestedChange = (section: string, field: string, value: any) => {
+  const handleNestedChange = (section: 'notifications' | 'privacy', field: string, value: boolean) => {
     setFormData(prev => ({
       ...prev,
       [section]: {
-        ...prev[section as keyof typeof prev],
+        ...prev[section],
         [field]: value
       }
     }));
@@ -93,7 +93,7 @@ const PlayerSettings = () => {
         name: formData.name,
         phone: formData.phone,
         city: formData.city,
-        age: parseInt(formData.age) || undefined,
+        age: formData.age ? parseInt(formData.age) : undefined,
         avatar: formData.avatar
       });
       

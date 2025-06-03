@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState } from 'react';
 interface AppContextType {
   darkMode: boolean;
   toggleDarkMode: () => void;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
   language: 'en' | 'bn';
   toggleLanguage: () => void;
   location: string;
@@ -22,6 +24,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     document.documentElement.classList.toggle('dark');
   };
 
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+    document.documentElement.classList.toggle('dark');
+  };
+
+  const theme: 'light' | 'dark' = darkMode ? 'dark' : 'light';
+
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'bn' : 'en');
   };
@@ -34,6 +43,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     <AppContext.Provider value={{
       darkMode,
       toggleDarkMode,
+      theme,
+      toggleTheme,
       language,
       toggleLanguage,
       location,
