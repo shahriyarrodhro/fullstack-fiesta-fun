@@ -102,6 +102,99 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Mobile Responsive Utilities */
+  .mobile-container {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+
+  .mobile-text {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+
+  .mobile-title {
+    @apply text-2xl sm:text-3xl lg:text-4xl xl:text-5xl;
+  }
+
+  .mobile-card {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  .mobile-button {
+    @apply px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base;
+  }
+
+  /* Dashboard Mobile Styles */
+  .dashboard-mobile {
+    @apply flex flex-col h-screen overflow-hidden;
+  }
+
+  .dashboard-content {
+    @apply flex-1 overflow-auto p-4 sm:p-6;
+  }
+
+  .dashboard-sidebar-mobile {
+    @apply fixed inset-y-0 left-0 z-50 w-64 bg-white transform transition-transform duration-300 ease-in-out;
+  }
+
+  .dashboard-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+
+  /* Form Mobile Styles */
+  .form-mobile {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .form-grid-mobile {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6;
+  }
+
+  /* Card Mobile Styles */
+  .card-mobile {
+    @apply rounded-lg sm:rounded-xl lg:rounded-2xl;
+  }
+
+  .card-content-mobile {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  /* Responsive Images */
+  .responsive-image {
+    @apply w-full h-32 sm:h-40 md:h-48 lg:h-56 xl:h-64 object-cover;
+  }
+
+  /* Navigation Mobile Styles */
+  .nav-mobile {
+    @apply flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4;
+  }
+
+  /* Typography Mobile Responsive */
+  .heading-mobile {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold;
+  }
+
+  .subheading-mobile {
+    @apply text-base sm:text-lg md:text-xl text-gray-600;
+  }
+
+  /* Button Mobile Styles */
+  .btn-mobile {
+    @apply w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 text-center;
+  }
+
+  /* Spacing Mobile */
+  .section-mobile {
+    @apply py-8 sm:py-12 lg:py-16 xl:py-20;
+  }
+
+  .margin-mobile {
+    @apply mb-4 sm:mb-6 lg:mb-8;
+  }
 }
 
 @keyframes float {
@@ -116,3 +209,72 @@
 
 .font-inter { font-family: 'Inter', sans-serif; }
 .font-playfair { font-family: 'Playfair Display', serif; }
+
+/* Mobile-first breakpoints */
+@media (max-width: 640px) {
+  .container {
+    @apply px-4;
+  }
+  
+  .dashboard-sidebar {
+    @apply hidden;
+  }
+  
+  .mobile-menu {
+    @apply block;
+  }
+  
+  .grid-mobile-1 {
+    @apply grid-cols-1;
+  }
+  
+  .text-mobile-sm {
+    @apply text-sm;
+  }
+  
+  .p-mobile-sm {
+    @apply p-4;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .grid-tablet {
+    @apply grid-cols-2;
+  }
+  
+  .text-tablet {
+    @apply text-base;
+  }
+}
+
+@media (min-width: 769px) {
+  .dashboard-sidebar {
+    @apply block;
+  }
+  
+  .mobile-menu {
+    @apply hidden;
+  }
+}
+
+/* Touch-friendly mobile interactions */
+@media (hover: none) and (pointer: coarse) {
+  .touch-target {
+    @apply min-h-12 min-w-12;
+  }
+  
+  .hover\:scale-105:hover {
+    transform: none;
+  }
+  
+  .hover\:-translate-y-1:hover {
+    transform: none;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .retina-border {
+    border-width: 0.5px;
+  }
+}

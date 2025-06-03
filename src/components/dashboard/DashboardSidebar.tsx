@@ -1,212 +1,214 @@
 
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
 import { 
   Home, 
   Calendar, 
-  MapPin, 
   Trophy, 
   Users, 
-  MessageCircle, 
+  Search, 
   Settings, 
-  LogOut,
-  CreditCard,
-  Bell,
-  User,
-  Search,
-  BarChart3,
-  Shield,
-  Building2,
-  Menu,
-  X
+  LogOut, 
+  Menu, 
+  X,
+  MapPin,
+  MessageCircle,
+  Target,
+  Star,
+  Bell
 } from 'lucide-react';
 
 const DashboardSidebar = () => {
-  const { user, logout } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const { user, logout } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const menuItems = [
+    { 
+      icon: Home, 
+      label: 'Dashboard', 
+      path: '/player/dashboard',
+      badge: null 
+    },
+    { 
+      icon: Calendar, 
+      label: 'My Bookings', 
+      path: '/player/bookings',
+      badge: '3' 
+    },
+    { 
+      icon: Trophy, 
+      label: 'Tournaments', 
+      path: '/player/tournaments',
+      badge: null 
+    },
+    { 
+      icon: Users, 
+      label: 'My Teams', 
+      path: '/player/teams',
+      badge: null 
+    },
+    { 
+      icon: Search, 
+      label: 'Matchmaking', 
+      path: '/player/matchmaking',
+      badge: 'New' 
+    },
+    { 
+      icon: MessageCircle, 
+      label: 'Messages', 
+      path: '/player/messages',
+      badge: '5' 
+    },
+    { 
+      icon: MapPin, 
+      label: 'Find Turfs', 
+      path: '/turfs',
+      badge: null 
+    },
+    { 
+      icon: Settings, 
+      label: 'Settings', 
+      path: '/player/settings',
+      badge: null 
+    }
+  ];
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const getMenuItems = () => {
-    if (!user) return [];
+  const isActive = (path: string) => location.pathname === path;
 
-    const baseItems = [
-      { icon: Home, label: 'Dashboard', path: `/${user.role === 'player' ? 'player' : user.role}`, active: location.pathname === `/${user.role === 'player' ? 'player' : user.role}` },
-    ];
-
-    switch (user.role) {
-      case 'player':
-        return [
-          ...baseItems,
-          { icon: Calendar, label: 'My Bookings', path: '/player/bookings', active: location.pathname === '/player/bookings' },
-          { icon: MapPin, label: 'Find Turfs', path: '/turfs', active: location.pathname === '/turfs' },
-          { icon: Search, label: 'Matchmaking', path: '/player/matchmaking', active: location.pathname === '/player/matchmaking' },
-          { icon: Trophy, label: 'Tournaments', path: '/tournaments', active: location.pathname === '/tournaments' },
-          { icon: Users, label: 'My Teams', path: '/player/teams', active: location.pathname === '/player/teams' },
-          { icon: MessageCircle, label: 'Messages', path: '/player/messages', active: location.pathname === '/player/messages' },
-          { icon: CreditCard, label: 'Payments', path: '/player/payments', active: location.pathname === '/player/payments' },
-          { icon: Bell, label: 'Notifications', path: '/player/notifications', active: location.pathname === '/player/notifications' },
-        ];
-      
-      case 'turf_owner':
-        return [
-          ...baseItems,
-          { icon: Building2, label: 'My Turfs', path: '/turf-owner/turfs', active: location.pathname === '/turf-owner/turfs' },
-          { icon: Calendar, label: 'Bookings', path: '/turf-owner/bookings', active: location.pathname === '/turf-owner/bookings' },
-          { icon: BarChart3, label: 'Analytics', path: '/turf-owner/analytics', active: location.pathname === '/turf-owner/analytics' },
-          { icon: CreditCard, label: 'Revenue', path: '/turf-owner/revenue', active: location.pathname === '/turf-owner/revenue' },
-          { icon: MessageCircle, label: 'Messages', path: '/turf-owner/messages', active: location.pathname === '/turf-owner/messages' },
-          { icon: Bell, label: 'Notifications', path: '/turf-owner/notifications', active: location.pathname === '/turf-owner/notifications' },
-        ];
-      
-      case 'admin':
-        return [
-          ...baseItems,
-          { icon: Users, label: 'Users', path: '/admin/users', active: location.pathname === '/admin/users' },
-          { icon: Building2, label: 'Turfs', path: '/admin/turfs', active: location.pathname === '/admin/turfs' },
-          { icon: Trophy, label: 'Tournaments', path: '/admin/tournaments', active: location.pathname === '/admin/tournaments' },
-          { icon: BarChart3, label: 'Analytics', path: '/admin/analytics', active: location.pathname === '/admin/analytics' },
-          { icon: CreditCard, label: 'Payments', path: '/admin/payments', active: location.pathname === '/admin/payments' },
-          { icon: MessageCircle, label: 'Messages', path: '/admin/messages', active: location.pathname === '/admin/messages' },
-          { icon: Bell, label: 'Notifications', path: '/admin/notifications', active: location.pathname === '/admin/notifications' },
-        ];
-      
-      case 'superadmin':
-        return [
-          ...baseItems,
-          { icon: Shield, label: 'System', path: '/superadmin/system', active: location.pathname === '/superadmin/system' },
-          { icon: Users, label: 'All Users', path: '/superadmin/users', active: location.pathname === '/superadmin/users' },
-          { icon: Building2, label: 'All Turfs', path: '/superadmin/turfs', active: location.pathname === '/superadmin/turfs' },
-          { icon: BarChart3, label: 'Platform Analytics', path: '/superadmin/analytics', active: location.pathname === '/superadmin/analytics' },
-          { icon: CreditCard, label: 'Revenue Management', path: '/superadmin/revenue', active: location.pathname === '/superadmin/revenue' },
-          { icon: Settings, label: 'Platform Settings', path: '/superadmin/settings', active: location.pathname === '/superadmin/settings' },
-        ];
-      
-      default:
-        return baseItems;
-    }
-  };
-
-  const sidebarItems = getMenuItems();
-
-  const SidebarContent = () => (
-    <>
+  const sidebarContent = (
+    <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-blue-50">
-        <Link to="/" className="flex items-center space-x-3 group">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-            <span className="text-white font-bold text-lg">⚡</span>
-          </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            TurfMaster
-          </span>
-        </Link>
-      </div>
-
-      {/* User Profile */}
-      <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-blue-50">
-        <div className="flex items-center space-x-3">
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12 ring-2 ring-green-500 ring-offset-2">
             <AvatarImage src={user?.avatar} alt={user?.name} />
-            <AvatarFallback className="bg-gradient-to-br from-green-500 to-green-600 text-white font-semibold">
+            <AvatarFallback className="bg-gradient-to-br from-green-500 to-green-600 text-white font-bold">
               {user?.name?.charAt(0) || 'U'}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-900 truncate">
-              {user?.name || 'User'}
-            </p>
-            <p className="text-xs text-gray-500 truncate">
-              {user?.email || 'user@example.com'}
-            </p>
-            <span className="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full mt-1 font-medium">
-              {user?.role?.replace('_', ' ').toUpperCase() || 'USER'}
-            </span>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900 truncate">{user?.name || 'User'}</h3>
+            <p className="text-sm text-gray-500 truncate">{user?.email || 'user@example.com'}</p>
+          </div>
+        </div>
+        <div className="mt-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600">Player Level</span>
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
+              Pro
+            </Badge>
+          </div>
+          <div className="mt-2 bg-gray-200 rounded-full h-2">
+            <div className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full w-3/4"></div>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation Menu */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {sidebarItems.map((item) => (
-          <Link
+        {menuItems.map((item) => (
+          <Button
             key={item.path}
-            to={item.path}
-            className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group ${
-              item.active
-                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg transform scale-105'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:shadow-md'
-            }`}
-            onClick={() => setIsOpen(false)}
+            variant={isActive(item.path) ? 'default' : 'ghost'}
+            className={`w-full justify-start h-12 ${
+              isActive(item.path)
+                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
+                : 'text-gray-700 hover:bg-green-50 hover:text-green-700'
+            } transition-all duration-300`}
+            onClick={() => handleNavigation(item.path)}
           >
-            <item.icon className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110 ${
-              item.active ? 'text-white' : 'text-green-600'
+            <item.icon className={`w-5 h-5 mr-3 ${
+              isActive(item.path) ? 'text-white' : 'text-gray-500'
             }`} />
-            <span>{item.label}</span>
-            {item.active && (
-              <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <span className="flex-1 text-left">{item.label}</span>
+            {item.badge && (
+              <Badge 
+                variant={isActive(item.path) ? 'secondary' : 'outline'} 
+                className={`ml-2 text-xs ${
+                  isActive(item.path) 
+                    ? 'bg-white/20 text-white border-white/30' 
+                    : 'bg-green-100 text-green-800 border-green-300'
+                }`}
+              >
+                {item.badge}
+              </Badge>
             )}
-          </Link>
+          </Button>
         ))}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200 space-y-2 bg-gradient-to-r from-gray-50 to-white">
-        <Link
-          to="/settings"
-          className="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 transition-all duration-300 group"
-          onClick={() => setIsOpen(false)}
+      {/* Quick Actions */}
+      <div className="p-4 border-t border-gray-200 space-y-2">
+        <Button 
+          variant="outline" 
+          className="w-full justify-start h-10 hover:bg-blue-50 hover:border-blue-500 transition-all duration-300"
+          onClick={() => handleNavigation('/player/notifications')}
         >
-          <Settings className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform duration-300" />
-          <span>Settings</span>
-        </Link>
-        <Button
-          variant="ghost"
-          size="sm"
+          <Bell className="w-4 h-4 mr-2" />
+          Notifications
+          <Badge variant="destructive" className="ml-auto text-xs">2</Badge>
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          className="w-full justify-start h-10 hover:bg-red-50 hover:border-red-500 hover:text-red-700 transition-all duration-300"
           onClick={handleLogout}
-          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all duration-300 group"
         >
-          <LogOut className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
-          Logout
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
         </Button>
       </div>
-    </>
+    </div>
   );
 
   return (
     <>
-      {/* Mobile Trigger Button */}
+      {/* Mobile Menu Button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="bg-white/90 backdrop-blur-md shadow-lg border-gray-200 hover:bg-white/95"
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
-            <div className="h-full bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 flex flex-col">
-              <SidebarContent />
-            </div>
-          </SheetContent>
-        </Sheet>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="bg-white/90 backdrop-blur-sm shadow-lg"
+        >
+          {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+        </Button>
       </div>
 
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-64 bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 h-screen flex-col shadow-lg">
-        <SidebarContent />
+      <div className="hidden md:block w-80 bg-white border-r border-gray-200 shadow-lg">
+        {sidebarContent}
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div className={`md:hidden fixed left-0 top-0 h-full w-80 bg-white border-r border-gray-200 shadow-xl z-50 transform transition-transform duration-300 ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        {sidebarContent}
       </div>
     </>
   );

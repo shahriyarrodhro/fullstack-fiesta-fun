@@ -8,17 +8,15 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Trophy, 
   Calendar, 
-  MapPin, 
   Users, 
-  DollarSign,
-  Clock,
-  Mail,
-  Phone,
-  CheckCircle,
+  MapPin, 
+  Clock, 
+  Star,
   ArrowLeft,
-  Award
+  Target,
+  Award,
+  DollarSign
 } from 'lucide-react';
-import { mockTournaments } from '@/data/mockData';
 import { useAuth } from '@/contexts/AuthContext';
 
 const TournamentDetails = () => {
@@ -27,21 +25,50 @@ const TournamentDetails = () => {
   const { user } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
 
-  const tournament = mockTournaments.find(t => t.id === parseInt(id || '0'));
+  // Mock tournament data
+  const tournament = {
+    id: parseInt(id || '1'),
+    name: 'Dhaka Premier League 2024',
+    description: 'The biggest football tournament in Dhaka featuring top teams from across the city. Join us for an exciting month of competitive football.',
+    startDate: '2024-02-15',
+    endDate: '2024-03-15',
+    registrationDeadline: '2024-02-10',
+    location: 'Gulshan Sports Complex',
+    venue: 'Multiple venues across Dhaka',
+    prize: '50,000',
+    entryFee: '5,000',
+    maxTeams: 32,
+    registeredTeams: 16,
+    status: 'Registration Open',
+    type: 'Football',
+    format: 'Knockout + League',
+    matchDuration: '90 minutes',
+    images: [
+      'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&h=600&fit=crop'
+    ],
+    rules: [
+      'Minimum 11 players per team',
+      'Maximum 16 players per squad',
+      'Teams must arrive 30 minutes before match time',
+      'Proper football boots required',
+      'Valid team registration required'
+    ],
+    schedule: [
+      { phase: 'Group Stage', dates: 'Feb 15-25', description: 'Round robin matches' },
+      { phase: 'Quarter Finals', dates: 'Feb 28-Mar 2', description: 'Knockout rounds' },
+      { phase: 'Semi Finals', dates: 'Mar 5-6', description: 'Top 4 teams compete' },
+      { phase: 'Final', dates: 'Mar 15', description: 'Championship match' }
+    ],
+    prizes: [
+      { position: '1st Place', amount: '25,000', trophy: 'Championship Trophy' },
+      { position: '2nd Place', amount: '15,000', trophy: 'Runner-up Trophy' },
+      { position: '3rd Place', amount: '10,000', trophy: 'Bronze Medal' }
+    ]
+  };
 
-  if (!tournament) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Tournament not found</h1>
-            <Button onClick={() => navigate('/tournaments')}>Back to Tournaments</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleRegistration = async () => {
     if (!user || !user.isAuthenticated) {
@@ -51,22 +78,20 @@ const TournamentDetails = () => {
 
     setIsRegistering(true);
     
-    // Simulate API call
+    // Simulate registration process
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Navigate to registration success
-    navigate('/tournament/registration-success', {
-      state: {
+    navigate('/tournament/register', { 
+      state: { 
         tournament,
-        registrationId: Math.random().toString(36).substr(2, 9).toUpperCase()
-      }
+        playerDetails: {
+          name: user.name,
+          email: user.email,
+          phone: user.phone
+        }
+      } 
     });
   };
-
-  const isRegistrationOpen = tournament.status === 'open' && 
-    new Date() < new Date(tournament.registrationDeadline);
-
-  const spotsLeft = tournament.maxTeams - tournament.registeredTeams;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -85,27 +110,31 @@ const TournamentDetails = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Tournament Header */}
+            {/* Image Gallery */}
             <Card className="border-0 shadow-lg overflow-hidden">
               <div className="relative">
                 <img 
-                  src={tournament.image} 
+                  src={tournament.images[currentImageIndex]} 
                   alt={tournament.name}
-                  className="w-full h-64 object-cover"
+                  className="w-full h-96 object-cover"
                 />
-                <div className="absolute inset-0 bg-black/30"></div>
-                <div className="absolute bottom-6 left-6 text-white">
-                  <h1 className="text-3xl font-bold mb-2">{tournament.name}</h1>
-                  <div className="flex items-center gap-4">
-                    <Badge className="bg-green-500 text-white">
-                      {tournament.sport.toUpperCase()}
-                    </Badge>
-                    <Badge className={`${
-                      tournament.status === 'open' ? 'bg-green-500' : 'bg-red-500'
-                    } text-white`}>
-                      {tournament.status.toUpperCase()}
-                    </Badge>
-                  </div>
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                  {tournament.images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="absolute top-4 left-4">
+                  <Badge className={`${
+                    tournament.status === 'Registration Open' ? 'bg-green-500' : 'bg-yellow-500'
+                  } text-white`}>
+                    {tournament.status}
+                  </Badge>
                 </div>
               </div>
             </Card>
@@ -113,105 +142,102 @@ const TournamentDetails = () => {
             {/* Tournament Info */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-2xl">Tournament Information</CardTitle>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+                      {tournament.name}
+                    </CardTitle>
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <MapPin className="w-4 h-4" />
+                        <span>{tournament.location}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <Users className="w-4 h-4" />
+                        <span>{tournament.registeredTeams}/{tournament.maxTeams} teams</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-bold text-green-600">৳{tournament.prize}</div>
+                    <div className="text-sm text-gray-500">Total Prize Pool</div>
+                  </div>
+                </div>
                 <CardDescription className="text-base">
                   {tournament.description}
                 </CardDescription>
               </CardHeader>
+            </Card>
+
+            {/* Tournament Schedule */}
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-500" />
+                  Tournament Schedule
+                </CardTitle>
+              </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                      <Calendar className="w-5 h-5 text-blue-500" />
-                      <div>
-                        <p className="text-sm text-gray-600">Start Date</p>
-                        <p className="font-medium">{new Date(tournament.startDate).toLocaleDateString()}</p>
+                <div className="space-y-4">
+                  {tournament.schedule.map((phase, index) => (
+                    <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">{phase.phase}</h4>
+                        <p className="text-sm text-gray-600">{phase.description}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-gray-900">{phase.dates}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
-                      <Calendar className="w-5 h-5 text-red-500" />
-                      <div>
-                        <p className="text-sm text-gray-600">End Date</p>
-                        <p className="font-medium">{new Date(tournament.endDate).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                      <MapPin className="w-5 h-5 text-purple-500" />
-                      <div>
-                        <p className="text-sm text-gray-600">Location</p>
-                        <p className="font-medium">{tournament.location}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <DollarSign className="w-5 h-5 text-green-500" />
-                      <div>
-                        <p className="text-sm text-gray-600">Entry Fee</p>
-                        <p className="font-medium">৳{tournament.entryFee}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
-                      <Award className="w-5 h-5 text-yellow-500" />
-                      <div>
-                        <p className="text-sm text-gray-600">Prize Pool</p>
-                        <p className="font-medium">৳{tournament.prizePool}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-                      <Users className="w-5 h-5 text-orange-500" />
-                      <div>
-                        <p className="text-sm text-gray-600">Format</p>
-                        <p className="font-medium">{tournament.format}</p>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Rules & Regulations */}
+            {/* Prizes */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  Rules & Regulations
+                  <Award className="w-5 h-5 text-yellow-500" />
+                  Prize Distribution
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {tournament.prizes.map((prize, index) => (
+                    <div key={index} className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border-2 border-yellow-200">
+                      <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Trophy className="w-8 h-8 text-white" />
+                      </div>
+                      <h4 className="font-bold text-gray-900 mb-2">{prize.position}</h4>
+                      <p className="text-2xl font-bold text-green-600 mb-1">৳{prize.amount}</p>
+                      <p className="text-sm text-gray-600">{prize.trophy}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Rules */}
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5 text-red-500" />
+                  Tournament Rules
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
                   {tournament.rules.map((rule, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                      <span className="text-red-500 mt-1">•</span>
                       <span>{rule}</span>
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-            </Card>
-
-            {/* Contact Information */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <p className="font-medium text-gray-900 mb-2">Organizer</p>
-                    <p className="text-gray-600">{tournament.contact.organizer}</p>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-5 h-5 text-green-500" />
-                      <span>{tournament.contact.phone}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-blue-500" />
-                      <span>{tournament.contact.email}</span>
-                    </div>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </div>
@@ -222,76 +248,73 @@ const TournamentDetails = () => {
               <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
                 <CardTitle className="flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-green-500" />
-                  Tournament Registration
+                  Register Your Team
                 </CardTitle>
+                <CardDescription>Join this exciting tournament</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  {/* Registration Stats */}
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-3xl font-bold text-green-600 mb-1">
-                      {tournament.registeredTeams}/{tournament.maxTeams}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-blue-50 rounded-lg">
+                      <Calendar className="w-5 h-5 text-blue-500 mx-auto mb-1" />
+                      <p className="text-sm text-gray-600">Start Date</p>
+                      <p className="font-medium">{new Date(tournament.startDate).toLocaleDateString()}</p>
                     </div>
-                    <p className="text-sm text-gray-600">Teams Registered</p>
-                    {spotsLeft > 0 && (
-                      <p className="text-xs text-orange-600 mt-1">
-                        {spotsLeft} spots remaining
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Registration Deadline */}
-                  <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Clock className="w-4 h-4 text-yellow-600" />
-                      <span className="text-sm font-medium text-yellow-800">Registration Deadline</span>
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <Clock className="w-5 h-5 text-green-500 mx-auto mb-1" />
+                      <p className="text-sm text-gray-600">Duration</p>
+                      <p className="font-medium">{tournament.matchDuration}</p>
                     </div>
-                    <p className="text-yellow-700">
-                      {new Date(tournament.registrationDeadline).toLocaleDateString()}
-                    </p>
                   </div>
 
-                  {/* Entry Fee */}
-                  <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                    <p className="text-sm text-gray-600 mb-1">Entry Fee</p>
-                    <p className="text-2xl font-bold text-green-600">৳{tournament.entryFee}</p>
-                    <p className="text-xs text-gray-500 mt-1">per team</p>
+                  <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <h4 className="font-medium text-yellow-800 mb-2">Registration Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>Entry Fee:</span>
+                        <span className="font-semibold text-green-600">৳{tournament.entryFee}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Deadline:</span>
+                        <span>{new Date(tournament.registrationDeadline).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Format:</span>
+                        <span>{tournament.format}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Registration Button */}
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-900">Prize Pool</span>
+                      <span className="text-2xl font-bold text-green-600">৳{tournament.prize}</span>
+                    </div>
+                  </div>
+
                   <Button
                     onClick={handleRegistration}
-                    disabled={!isRegistrationOpen || spotsLeft === 0 || isRegistering}
+                    disabled={isRegistering || tournament.status !== 'Registration Open'}
                     className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   >
                     {isRegistering ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Registering...
+                        Processing...
                       </div>
-                    ) : spotsLeft === 0 ? (
-                      'Tournament Full'
-                    ) : !isRegistrationOpen ? (
-                      'Registration Closed'
-                    ) : user && user.isAuthenticated ? (
-                      'Register Team'
                     ) : (
-                      'Login to Register'
+                      <>
+                        <Trophy className="w-4 h-4 mr-2" />
+                        {user && user.isAuthenticated ? 'Register Team' : 'Login to Register'}
+                      </>
                     )}
                   </Button>
 
-                  {(!user || !user.isAuthenticated) && (
+                  {!user || !user.isAuthenticated ? (
                     <p className="text-sm text-center text-gray-500">
                       Please <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/login')}>login</Button> to register for this tournament
                     </p>
-                  )}
-
-                  {/* Additional Info */}
-                  <div className="text-xs text-gray-500 space-y-1">
-                    <p>• Registration fee is non-refundable</p>
-                    <p>• Team roster can be modified until tournament start</p>
-                    <p>• All players must be present for verification</p>
-                  </div>
+                  ) : null}
                 </div>
               </CardContent>
             </Card>
