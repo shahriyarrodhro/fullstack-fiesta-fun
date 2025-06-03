@@ -1,192 +1,159 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export type UserRole = 'superadmin' | 'admin' | 'turf_owner' | 'player';
-
-export interface User {
+interface User {
   id: string;
-  email: string;
   name: string;
-  role: UserRole;
-  phone?: string;
-  city?: string;
-  age?: number;
-  turfName?: string;
-  turfLocation?: string;
-  avatar?: string;
+  email: string;
+  role: 'superadmin' | 'admin' | 'turf_owner' | 'player';
   isAuthenticated: boolean;
+  avatar?: string;
+  city?: string;
+  phone?: string;
+  age?: number;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (userData: any) => Promise<boolean>;
+  login: (email: string, password: string, redirectTo?: string) => Promise<boolean>;
   logout: () => void;
+  register: (userData: any) => Promise<boolean>;
+  updateProfile: (userData: Partial<User>) => Promise<boolean>;
   isLoading: boolean;
-  updateUser: (userData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Demo credentials with enhanced data
-const demoCredentials = {
-  'superadmin@example.com': {
-    password: 'admin123',
-    user: {
-      id: '1',
-      email: 'superadmin@example.com',
-      name: 'Super Admin',
-      role: 'superadmin' as UserRole,
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      isAuthenticated: true
-    }
-  },
-  'admin@example.com': {
-    password: 'admin123',
-    user: {
-      id: '2',
-      email: 'admin@example.com',
-      name: 'Admin User',
-      role: 'admin' as UserRole,
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-      isAuthenticated: true
-    }
-  },
-  'turf@example.com': {
-    password: 'turf123',
-    user: {
-      id: '3',
-      email: 'turf@example.com',
-      name: 'Turf Owner',
-      role: 'turf_owner' as UserRole,
-      turfName: 'Green Field Sports',
-      turfLocation: 'Dhaka, Bangladesh',
-      phone: '+880171234567',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face',
-      isAuthenticated: true
-    }
-  },
-  'player@example.com': {
-    password: 'player123',
-    user: {
-      id: '4',
-      email: 'player@example.com',
-      name: 'Player User',
-      role: 'player' as UserRole,
-      city: 'Dhaka',
-      age: 25,
-      phone: '+880187654321',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
-      isAuthenticated: true
-    }
-  }
-};
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for existing session on app load
-    const savedUser = localStorage.getItem('turfmaster_user');
-    const sessionExpiry = localStorage.getItem('turfmaster_session_expiry');
-    
-    if (savedUser && sessionExpiry) {
-      const expiryTime = new Date(sessionExpiry);
-      const currentTime = new Date();
-      
-      if (currentTime < expiryTime) {
-        const userData = JSON.parse(savedUser);
-        userData.isAuthenticated = true;
-        setUser(userData);
-      } else {
-        // Session expired, clear storage
-        localStorage.removeItem('turfmaster_user');
-        localStorage.removeItem('turfmaster_session_expiry');
-      }
+    // Check for existing session
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const credentials = demoCredentials[email as keyof typeof demoCredentials];
-    
-    if (credentials && credentials.password === password) {
-      const userData = { ...credentials.user, isAuthenticated: true };
-      setUser(userData);
+  const login = async (email: string, password: string, redirectTo?: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
       
-      // Set session with 24 hour expiry
-      const expiryTime = new Date();
-      expiryTime.setTime(expiryTime.getTime() + (24 * 60 * 60 * 1000));
+      // Mock authentication - replace with real API call
+      const mockUsers = {
+        'superadmin@example.com': { id: '1', name: 'Super Admin', role: 'superadmin' as const, city: 'Dhaka', phone: '+8801234567890' },
+        'admin@example.com': { id: '2', name: 'Admin User', role: 'admin' as const, city: 'Dhaka', phone: '+8801234567891' },
+        'turf@example.com': { id: '3', name: 'Turf Owner', role: 'turf_owner' as const, city: 'Dhaka', phone: '+8801234567892' },
+        'player@example.com': { id: '4', name: 'John Doe', role: 'player' as const, city: 'Dhaka', phone: '+8801234567893', age: 25 }
+      };
+
+      if (mockUsers[email as keyof typeof mockUsers] && password === 'admin123' || password === 'turf123' || password === 'player123') {
+        const userData = mockUsers[email as keyof typeof mockUsers];
+        const authenticatedUser: User = {
+          ...userData,
+          email,
+          isAuthenticated: true,
+          avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face`
+        };
+        
+        setUser(authenticatedUser);
+        localStorage.setItem('user', JSON.stringify(authenticatedUser));
+        
+        // Redirect to the intended page or dashboard
+        if (redirectTo) {
+          navigate(redirectTo);
+        } else {
+          switch (authenticatedUser.role) {
+            case 'superadmin':
+              navigate('/superadmin/dashboard');
+              break;
+            case 'admin':
+              navigate('/admin/dashboard');
+              break;
+            case 'turf_owner':
+              navigate('/turf-owner/dashboard');
+              break;
+            case 'player':
+              navigate('/player/dashboard');
+              break;
+          }
+        }
+        
+        return true;
+      }
       
-      localStorage.setItem('turfmaster_user', JSON.stringify(userData));
-      localStorage.setItem('turfmaster_session_expiry', expiryTime.toISOString());
-      
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    } finally {
       setIsLoading(false);
-      return true;
     }
-    
-    setIsLoading(false);
-    return false;
   };
 
   const register = async (userData: any): Promise<boolean> => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const newUser: User = {
-      id: Date.now().toString(),
-      email: userData.email,
-      name: userData.name,
-      role: userData.role || 'player',
-      isAuthenticated: true,
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
-      ...userData
-    };
-    
-    setUser(newUser);
-    
-    // Set session with 24 hour expiry
-    const expiryTime = new Date();
-    expiryTime.setTime(expiryTime.getTime() + (24 * 60 * 60 * 1000));
-    
-    localStorage.setItem('turfmaster_user', JSON.stringify(newUser));
-    localStorage.setItem('turfmaster_session_expiry', expiryTime.toISOString());
-    
-    setIsLoading(false);
-    return true;
+    try {
+      setIsLoading(true);
+      // Mock registration - replace with real API call
+      const newUser: User = {
+        id: Date.now().toString(),
+        name: userData.name,
+        email: userData.email,
+        role: userData.role || 'player',
+        isAuthenticated: true,
+        city: userData.city,
+        phone: userData.phone,
+        age: userData.age,
+        avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face`
+      };
+      
+      setUser(newUser);
+      localStorage.setItem('user', JSON.stringify(newUser));
+      
+      // Navigate based on role
+      switch (newUser.role) {
+        case 'turf_owner':
+          navigate('/turf-owner/dashboard');
+          break;
+        default:
+          navigate('/player/dashboard');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateProfile = async (userData: Partial<User>): Promise<boolean> => {
+    try {
+      if (!user) return false;
+      
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return true;
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return false;
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('turfmaster_user');
-    localStorage.removeItem('turfmaster_session_expiry');
-  };
-
-  const updateUser = (userData: Partial<User>) => {
-    if (user) {
-      const updatedUser = { ...user, ...userData };
-      setUser(updatedUser);
-      localStorage.setItem('turfmaster_user', JSON.stringify(updatedUser));
-    }
+    localStorage.removeItem('user');
+    navigate('/');
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      login, 
-      register, 
-      logout, 
-      isLoading, 
-      updateUser 
-    }}>
+    <AuthContext.Provider value={{ user, login, logout, register, updateProfile, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

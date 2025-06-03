@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Calendar, 
   Clock, 
@@ -14,7 +15,9 @@ import {
   CheckCircle,
   ArrowLeft,
   Users,
-  Phone
+  Phone,
+  User,
+  Mail
 } from 'lucide-react';
 
 const BookingConfirmation = () => {
@@ -22,9 +25,17 @@ const BookingConfirmation = () => {
   const navigate = useNavigate();
   const [playerCount, setPlayerCount] = useState('');
   const [contactNumber, setContactNumber] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { turf, selectedSlot, date } = location.state || {};
+  const { turf, selectedSlot, date, playerDetails } = location.state || {};
+
+  // Auto-populate form with user details
+  React.useEffect(() => {
+    if (playerDetails) {
+      setContactNumber(playerDetails.phone || '');
+    }
+  }, [playerDetails]);
 
   if (!turf || !selectedSlot) {
     return (
@@ -43,7 +54,7 @@ const BookingConfirmation = () => {
   const selectedSlotData = turf.timeSlots.find(slot => slot.time === selectedSlot);
 
   const handleConfirmBooking = async () => {
-    if (!playerCount || !contactNumber) {
+    if (!playerCount || !contactNumber || !paymentMethod) {
       alert('Please fill in all required fields');
       return;
     }
@@ -62,7 +73,10 @@ const BookingConfirmation = () => {
         date,
         playerCount,
         contactNumber,
-        price: selectedSlotData?.price
+        paymentMethod,
+        playerDetails,
+        price: selectedSlotData?.price,
+        status: paymentMethod === 'pay_later' ? 'pending' : 'confirmed'
       }
     });
   };
@@ -108,6 +122,29 @@ const BookingConfirmation = () => {
                   </div>
                 </div>
 
+                {/* Auto-populated player details */}
+                {playerDetails && (
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 className="font-medium text-blue-800 mb-2">Player Details</h4>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-blue-600" />
+                        <span>{playerDetails.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-blue-600" />
+                        <span>{playerDetails.email}</span>
+                      </div>
+                      {playerDetails.city && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-blue-600" />
+                          <span>{playerDetails.city}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                     <Calendar className="w-5 h-5 text-blue-500" />
@@ -130,7 +167,6 @@ const BookingConfirmation = () => {
                     <span className="font-medium text-gray-900">Total Amount</span>
                     <span className="text-2xl font-bold text-green-600">৳{selectedSlotData?.price}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">Payment due at venue</p>
                 </div>
               </div>
             </CardContent>
@@ -181,10 +217,30 @@ const BookingConfirmation = () => {
                   <p className="text-sm text-gray-500 mt-1">We'll use this to contact you about your booking</p>
                 </div>
 
+                {/* Payment Method Selection */}
+                <div>
+                  <Label className="flex items-center gap-2 mb-2">
+                    <CreditCard className="w-4 h-4 text-purple-500" />
+                    Payment Method
+                  </Label>
+                  <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                    <SelectTrigger className="focus:border-green-500 transition-all duration-300">
+                      <SelectValue placeholder="Select payment method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pay_later">Pay Later (at venue)</SelectItem>
+                      <SelectItem value="pay_offline">Pay Offline (Cash)</SelectItem>
+                      <SelectItem value="sslcommerz">Pay Online (SSLCommerz)</SelectItem>
+                      <SelectItem value="bkash">bKash</SelectItem>
+                      <SelectItem value="nagad">Nagad</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                   <h4 className="font-medium text-yellow-800 mb-2">Important Notes</h4>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    <li>• Payment to be made at the venue</li>
+                    <li>• Your booking will be sent to the turf owner for approval</li>
                     <li>• Arrive 15 minutes before your slot</li>
                     <li>• Cancellation allowed up to 24 hours prior</li>
                     <li>• Bring valid ID for verification</li>
@@ -193,7 +249,7 @@ const BookingConfirmation = () => {
 
                 <Button
                   onClick={handleConfirmBooking}
-                  disabled={isLoading || !playerCount || !contactNumber}
+                  disabled={isLoading || !playerCount || !contactNumber || !paymentMethod}
                   className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   {isLoading ? (

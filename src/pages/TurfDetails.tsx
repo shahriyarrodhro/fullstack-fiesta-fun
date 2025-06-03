@@ -16,7 +16,8 @@ import {
   XCircle,
   Calendar,
   CreditCard,
-  ArrowLeft
+  ArrowLeft,
+  Eye
 } from 'lucide-react';
 import { mockTurfs } from '@/data/mockData';
 import { useAuth } from '@/contexts/AuthContext';
@@ -46,6 +47,9 @@ const TurfDetails = () => {
 
   const handleBooking = () => {
     if (!user || !user.isAuthenticated) {
+      // Store current page URL for redirect after login
+      const currentPath = window.location.pathname;
+      localStorage.setItem('redirectAfterLogin', currentPath);
       navigate('/login');
       return;
     }
@@ -55,12 +59,18 @@ const TurfDetails = () => {
       return;
     }
 
-    // Navigate to booking confirmation page
+    // Navigate to booking confirmation page with auto-populated data
     navigate(`/booking/confirm`, { 
       state: { 
         turf, 
         selectedSlot,
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        playerDetails: {
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          city: user.city
+        }
       } 
     });
   };
@@ -106,6 +116,13 @@ const TurfDetails = () => {
                   <Badge className={`${turf.available ? 'bg-green-500' : 'bg-red-500'}`}>
                     {turf.available ? 'Available' : 'Booked'}
                   </Badge>
+                </div>
+                {/* View Details Button */}
+                <div className="absolute top-4 right-4">
+                  <Button variant="outline" className="bg-white/80 backdrop-blur-sm">
+                    <Eye className="w-4 h-4 mr-2" />
+                    View Details
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -243,6 +260,16 @@ const TurfDetails = () => {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
+                  {/* Auto-populated date */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Date
+                    </label>
+                    <div className="p-3 bg-gray-50 rounded-lg border">
+                      <span className="font-medium">{new Date().toLocaleDateString()}</span>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Available Time Slots
