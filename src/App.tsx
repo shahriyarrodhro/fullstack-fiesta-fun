@@ -28,8 +28,8 @@ import CreateTeam from '@/pages/CreateTeam';
 function App() {
   return (
     <AppProvider>
-      <AuthProvider>
-        <Router>
+      <Router>
+        <AuthProvider>
           <div className="min-h-screen">
             <Routes>
               {/* Public Routes */}
@@ -121,8 +121,8 @@ function App() {
               />
             </Routes>
           </div>
-        </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </Router>
     </AppProvider>
   );
 }
