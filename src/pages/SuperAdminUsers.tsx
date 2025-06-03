@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,7 +20,8 @@ const SuperAdminUsers = () => {
       status: 'active',
       permissions: ['all'],
       lastActive: '5 min ago',
-      createdAt: '2024-01-01'
+      createdAt: '2024-01-01',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
     },
     {
       id: 2,
@@ -31,7 +31,8 @@ const SuperAdminUsers = () => {
       status: 'active',
       permissions: ['user_management', 'turf_approval', 'tournament_management'],
       lastActive: '2 hours ago',
-      createdAt: '2024-01-05'
+      createdAt: '2024-01-05',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
     },
     {
       id: 3,
@@ -42,7 +43,8 @@ const SuperAdminUsers = () => {
       permissions: ['turf_management'],
       lastActive: '1 day ago',
       createdAt: '2024-01-10',
-      turfs: 3
+      turfs: 3,
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face'
     },
     {
       id: 4,
@@ -53,7 +55,8 @@ const SuperAdminUsers = () => {
       permissions: ['booking'],
       lastActive: '3 hours ago',
       createdAt: '2024-01-15',
-      bookings: 12
+      bookings: 12,
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face'
     },
     {
       id: 5,
@@ -63,7 +66,8 @@ const SuperAdminUsers = () => {
       status: 'suspended',
       permissions: [],
       lastActive: '1 week ago',
-      createdAt: '2024-01-12'
+      createdAt: '2024-01-12',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b776?w=100&h=100&fit=crop&crop=face'
     }
   ];
 
@@ -260,8 +264,8 @@ const SuperAdminUsers = () => {
                       <div className="text-right text-sm text-gray-600">
                         <p>Last active: {user.lastActive}</p>
                         <p>Joined: {user.createdAt}</p>
-                        {user.role === 'turf_owner' && user.turfs && <p>Turfs: {user.turfs}</p>}
-                        {user.role === 'player' && user.bookings && <p>Bookings: {user.bookings}</p>}
+                        {'turfs' in user && user.turfs && <p>Turfs: {user.turfs}</p>}
+                        {'bookings' in user && user.bookings && <p>Bookings: {user.bookings}</p>}
                       </div>
                       <div className="flex space-x-1">
                         <Button variant="outline" size="sm">
