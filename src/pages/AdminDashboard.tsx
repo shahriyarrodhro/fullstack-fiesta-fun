@@ -1,78 +1,336 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
+  Shield, 
   Users, 
   Building2, 
-  Trophy, 
   DollarSign, 
-  TrendingUp, 
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  BarChart3,
+  Settings, 
+  Edit3,
+  Trash2,
+  Plus,
   Eye,
-  Settings
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  TrendingUp,
+  FileText,
+  MapPin,
+  Calendar
 } from 'lucide-react';
 
 const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+
   const stats = [
     { 
       label: 'Total Users', 
       value: '2,847', 
-      change: '+12.5%', 
+      change: '+12%', 
       icon: Users, 
       color: 'text-blue-600',
-      bgColor: 'bg-gradient-to-br from-blue-50 to-blue-100'
+      bgColor: 'bg-blue-50'
     },
     { 
       label: 'Active Turfs', 
-      value: '156', 
-      change: '+8', 
+      value: '456', 
+      change: '+28', 
       icon: Building2, 
       color: 'text-green-600',
-      bgColor: 'bg-gradient-to-br from-green-50 to-green-100'
+      bgColor: 'bg-green-50'
     },
     { 
-      label: 'Revenue (Month)', 
-      value: '৳1,25,000', 
-      change: '+18.2%', 
+      label: 'Monthly Revenue', 
+      value: '৳1,45,000', 
+      change: '+18%', 
       icon: DollarSign, 
       color: 'text-purple-600',
-      bgColor: 'bg-gradient-to-br from-purple-50 to-purple-100'
+      bgColor: 'bg-purple-50'
     },
     { 
-      label: 'Active Tournaments', 
-      value: '24', 
-      change: '+5', 
-      icon: Trophy, 
+      label: 'Pending Approvals', 
+      value: '23', 
+      change: '-5', 
+      icon: AlertTriangle, 
       color: 'text-orange-600',
-      bgColor: 'bg-gradient-to-br from-orange-50 to-orange-100'
+      bgColor: 'bg-orange-50'
     }
   ];
 
-  const recentActivity = [
-    { type: 'user', message: 'New user registration: John Doe', time: '5 min ago', status: 'info' },
-    { type: 'turf', message: 'New turf approved: Elite Sports Complex', time: '15 min ago', status: 'success' },
-    { type: 'payment', message: 'Payment dispute reported for booking #12345', time: '1 hour ago', status: 'warning' },
-    { type: 'tournament', message: 'Tournament registration opened: Premier League 2024', time: '2 hours ago', status: 'info' }
+  const users = [
+    { id: 1, name: 'Ahmed Rahman', email: 'ahmed@email.com', role: 'Player', status: 'Active', joinDate: '2024-01-15' },
+    { id: 2, name: 'Sarah Khan', email: 'sarah@email.com', role: 'Turf Owner', status: 'Active', joinDate: '2024-01-10' },
+    { id: 3, name: 'Mohammad Ali', email: 'ali@email.com', role: 'Player', status: 'Suspended', joinDate: '2024-01-08' }
   ];
 
-  const pendingApprovals = [
-    { id: 1, type: 'Turf Registration', name: 'Green Valley Sports', location: 'Uttara, Dhaka', date: '2024-01-15' },
-    { id: 2, type: 'Tournament', name: 'Football Championship', organizer: 'Sports Club BD', date: '2024-01-16' },
-    { id: 3, type: 'User Verification', name: 'Sarah Ahmed', role: 'Turf Owner', date: '2024-01-17' }
+  const turfs = [
+    { id: 1, name: 'Manchester Academy', owner: 'Sports Ltd', location: 'Gulshan', status: 'Active', bookings: 45 },
+    { id: 2, name: 'Barcelona Ground', owner: 'Barcelona BD', location: 'Dhanmondi', status: 'Pending', bookings: 32 },
+    { id: 3, name: 'Elite Sports', owner: 'Elite Sports', location: 'Banani', status: 'Active', bookings: 67 }
   ];
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'warning': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-      case 'info': return <Clock className="w-4 h-4 text-blue-500" />;
-      default: return <Clock className="w-4 h-4 text-gray-500" />;
+  const bookings = [
+    { id: 1, turf: 'Manchester Academy', player: 'Ahmed Rahman', date: '2024-02-15', status: 'Confirmed', amount: 2500 },
+    { id: 2, turf: 'Barcelona Ground', player: 'Sarah Khan', date: '2024-02-16', status: 'Pending', amount: 3000 },
+    { id: 3, turf: 'Elite Sports', player: 'Mohammad Ali', date: '2024-02-17', status: 'Cancelled', amount: 4500 }
+  ];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <div className="space-y-6">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stats.map((stat, index) => (
+                <Card key={index} className="border-0 shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
+                        <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                        <p className={`text-sm font-medium ${stat.color}`}>{stat.change}</p>
+                      </div>
+                      <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                        <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-blue-500" />
+                    <div>
+                      <p className="font-medium">New turf approved: Elite Basketball Court</p>
+                      <p className="text-sm text-gray-600">5 minutes ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-3 bg-green-50 rounded-lg">
+                    <Users className="w-5 h-5 text-green-500" />
+                    <div>
+                      <p className="font-medium">New user registered: John Doe</p>
+                      <p className="text-sm text-gray-600">2 hours ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-3 bg-orange-50 rounded-lg">
+                    <AlertTriangle className="w-5 h-5 text-orange-500" />
+                    <div>
+                      <p className="font-medium">Turf approval pending: City Sports Complex</p>
+                      <p className="text-sm text-gray-600">1 day ago</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
+      case 'users':
+        return (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>Manage all platform users</CardDescription>
+              </div>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add User
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {users.map((user) => (
+                  <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <Avatar>
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-medium">{user.name}</h3>
+                        <p className="text-sm text-gray-600">{user.email}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="outline">{user.role}</Badge>
+                          <Badge className={user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                            {user.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Edit3 className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-red-600">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+
+      case 'turfs':
+        return (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Turf Management</CardTitle>
+                <CardDescription>Manage all turfs and venues</CardDescription>
+              </div>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Turf
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {turfs.map((turf) => (
+                  <div key={turf.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <h3 className="font-medium">{turf.name}</h3>
+                      <p className="text-sm text-gray-600 flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {turf.location} • Owner: {turf.owner}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge className={turf.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                          {turf.status}
+                        </Badge>
+                        <span className="text-sm text-gray-500">{turf.bookings} bookings</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Edit3 className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-red-600">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+
+      case 'bookings':
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Booking Management</CardTitle>
+              <CardDescription>View and manage all bookings</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {bookings.map((booking) => (
+                  <div key={booking.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <h3 className="font-medium">{booking.turf}</h3>
+                      <p className="text-sm text-gray-600 flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        {booking.date} • Player: {booking.player}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge className={
+                          booking.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                          booking.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }>
+                          {booking.status}
+                        </Badge>
+                        <span className="text-sm font-medium text-green-600">৳{booking.amount}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <CheckCircle className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-red-600">
+                        <XCircle className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+
+      case 'settings':
+        return (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Site Configuration</CardTitle>
+                <CardDescription>Manage global site settings</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Site Name</label>
+                  <Input defaultValue="TurfMaster" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Commission Rate (%)</label>
+                  <Input defaultValue="10" type="number" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Default Currency</label>
+                  <Input defaultValue="BDT" />
+                </div>
+                <Button>Save Changes</Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Content Management</CardTitle>
+                <CardDescription>Update homepage and content</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button variant="outline" className="w-full justify-start">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Edit Homepage Content
+                </Button>
+                <Button variant="outline" className="w-full justify-start">
+                  <Edit3 className="w-4 h-4 mr-2" />
+                  Manage Footer Content
+                </Button>
+                <Button variant="outline" className="w-full justify-start">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configure Email Templates
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -82,136 +340,39 @@ const AdminDashboard = () => {
       
       <div className="flex-1 overflow-auto">
         <div className="p-6">
-          {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Admin Dashboard
-            </h1>
-            <p className="text-gray-600 mt-2">Monitor and manage platform operations</p>
+            <div className="flex items-center gap-3 mb-2">
+              <Shield className="w-8 h-8 text-blue-500" />
+              <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            </div>
+            <p className="text-gray-600">Complete platform management and oversight</p>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                      <p className={`text-sm font-medium ${stat.color}`}>{stat.change}</p>
-                    </div>
-                    <div className={`p-4 rounded-2xl ${stat.bgColor}`}>
-                      <stat.icon className={`w-8 h-8 ${stat.color}`} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Tabs */}
+          <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
+            {[
+              { id: 'overview', label: 'Overview', icon: TrendingUp },
+              { id: 'users', label: 'Users', icon: Users },
+              { id: 'turfs', label: 'Turfs', icon: Building2 },
+              { id: 'bookings', label: 'Bookings', icon: Calendar },
+              { id: 'settings', label: 'Settings', icon: Settings }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Recent Activity */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-blue-500" />
-                  Recent Activity
-                </CardTitle>
-                <CardDescription>Latest platform activities and updates</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {recentActivity.map((activity, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                      {getStatusIcon(activity.status)}
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-900">{activity.message}</p>
-                        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full mt-4">
-                  View All Activities
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Pending Approvals */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50">
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-orange-500" />
-                  Pending Approvals
-                </CardTitle>
-                <CardDescription>Items requiring your review</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {pendingApprovals.map((item) => (
-                    <div key={item.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline">{item.type}</Badge>
-                        <span className="text-xs text-gray-500">{item.date}</span>
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-1">{item.name}</h4>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {item.location || item.organizer || item.role}
-                      </p>
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="outline">
-                          <Eye className="w-4 h-4 mr-1" />
-                          Review
-                        </Button>
-                        <Button size="sm">
-                          Approve
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {pendingApprovals.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>All caught up! No pending approvals.</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Quick Actions */}
-          <Card className="mt-8 border-0 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-green-500" />
-                Quick Actions
-              </CardTitle>
-              <CardDescription>Common administrative tasks</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
-                  <Users className="w-6 h-6 text-blue-500" />
-                  <span>Manage Users</span>
-                </Button>
-                <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
-                  <Building2 className="w-6 h-6 text-green-500" />
-                  <span>Manage Turfs</span>
-                </Button>
-                <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
-                  <Trophy className="w-6 h-6 text-purple-500" />
-                  <span>Tournaments</span>
-                </Button>
-                <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
-                  <BarChart3 className="w-6 h-6 text-orange-500" />
-                  <span>Analytics</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          {renderContent()}
         </div>
       </div>
     </div>

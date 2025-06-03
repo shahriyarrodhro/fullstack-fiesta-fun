@@ -1,159 +1,238 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: 'superadmin' | 'admin' | 'turf_owner' | 'player';
-  isAuthenticated: boolean;
-  avatar?: string;
-  city?: string;
   phone?: string;
-  age?: number;
+  city?: string;
+  role: 'player' | 'turf_owner' | 'admin' | 'super_admin';
+  avatar?: string;
+  isAuthenticated: boolean;
+}
+
+interface Team {
+  id: string;
+  name: string;
+  description: string;
+  sport: string;
+  city: string;
+  maxPlayers: number;
+  logo?: string;
+  captain: string;
+  members: number;
+  createdAt: string;
+}
+
+interface Booking {
+  id: string;
+  turfId: number;
+  turfName: string;
+  date: string;
+  timeSlot: string;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  paymentStatus: 'unpaid' | 'paid' | 'refunded';
+  totalAmount: number;
+  playerName: string;
+  playerEmail: string;
+  playerPhone: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string, redirectTo?: string) => Promise<boolean>;
-  logout: () => void;
+  teams: Team[];
+  bookings: Booking[];
+  login: (email: string, password: string) => Promise<boolean>;
   register: (userData: any) => Promise<boolean>;
-  updateProfile: (userData: Partial<User>) => Promise<boolean>;
-  isLoading: boolean;
+  logout: () => void;
+  updateProfile: (profileData: any) => Promise<boolean>;
+  createTeam: (teamData: any) => Promise<string>;
+  addBooking: (bookingData: any) => void;
+  updateBookingStatus: (bookingId: string, status: string, paymentStatus?: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
-    // Check for existing session
-    const savedUser = localStorage.getItem('user');
+    // Load user from localStorage on mount
+    const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const userData = JSON.parse(savedUser);
+      setUser(userData);
+      loadUserTeams(userData.id);
+      loadUserBookings(userData.id);
     }
-    setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, redirectTo?: string): Promise<boolean> => {
+  const loadUserTeams = (userId: string) => {
+    const savedTeams = localStorage.getItem(`teams_${userId}`);
+    if (savedTeams) {
+      setTeams(JSON.parse(savedTeams));
+    }
+  };
+
+  const loadUserBookings = (userId: string) => {
+    const savedBookings = localStorage.getItem(`bookings_${userId}`);
+    if (savedBookings) {
+      setBookings(JSON.parse(savedBookings));
+    }
+  };
+
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      
-      // Mock authentication - replace with real API call
-      const mockUsers = {
-        'superadmin@example.com': { id: '1', name: 'Super Admin', role: 'superadmin' as const, city: 'Dhaka', phone: '+8801234567890' },
-        'admin@example.com': { id: '2', name: 'Admin User', role: 'admin' as const, city: 'Dhaka', phone: '+8801234567891' },
-        'turf@example.com': { id: '3', name: 'Turf Owner', role: 'turf_owner' as const, city: 'Dhaka', phone: '+8801234567892' },
-        'player@example.com': { id: '4', name: 'John Doe', role: 'player' as const, city: 'Dhaka', phone: '+8801234567893', age: 25 }
+      // Mock login logic
+      const mockUser: User = {
+        id: '1',
+        name: 'John Doe',
+        email: email,
+        phone: '+8801234567890',
+        city: 'Dhaka',
+        role: email.includes('admin') ? 'admin' : email.includes('super') ? 'super_admin' : email.includes('owner') ? 'turf_owner' : 'player',
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop',
+        isAuthenticated: true
       };
 
-      if (mockUsers[email as keyof typeof mockUsers] && password === 'admin123' || password === 'turf123' || password === 'player123') {
-        const userData = mockUsers[email as keyof typeof mockUsers];
-        const authenticatedUser: User = {
-          ...userData,
-          email,
-          isAuthenticated: true,
-          avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face`
-        };
-        
-        setUser(authenticatedUser);
-        localStorage.setItem('user', JSON.stringify(authenticatedUser));
-        
-        // Redirect to the intended page or dashboard
-        if (redirectTo) {
-          navigate(redirectTo);
-        } else {
-          switch (authenticatedUser.role) {
-            case 'superadmin':
-              navigate('/superadmin/dashboard');
-              break;
-            case 'admin':
-              navigate('/admin/dashboard');
-              break;
-            case 'turf_owner':
-              navigate('/turf-owner/dashboard');
-              break;
-            case 'player':
-              navigate('/player/dashboard');
-              break;
-          }
-        }
-        
-        return true;
+      setUser(mockUser);
+      localStorage.setItem('currentUser', JSON.stringify(mockUser));
+      loadUserTeams(mockUser.id);
+      loadUserBookings(mockUser.id);
+
+      // Check for redirect URL
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
+      if (redirectUrl) {
+        localStorage.removeItem('redirectAfterLogin');
+        navigate(redirectUrl);
       }
-      
-      return false;
+
+      return true;
     } catch (error) {
       console.error('Login error:', error);
       return false;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const register = async (userData: any): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      // Mock registration - replace with real API call
       const newUser: User = {
-        id: Date.now().toString(),
+        id: Math.random().toString(36).substr(2, 9),
         name: userData.name,
         email: userData.email,
-        role: userData.role || 'player',
-        isAuthenticated: true,
-        city: userData.city,
         phone: userData.phone,
-        age: userData.age,
-        avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face`
+        city: userData.city,
+        role: 'player',
+        isAuthenticated: true
       };
-      
+
       setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
-      
-      // Navigate based on role
-      switch (newUser.role) {
-        case 'turf_owner':
-          navigate('/turf-owner/dashboard');
-          break;
-        default:
-          navigate('/player/dashboard');
-      }
-      
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
       return true;
     } catch (error) {
       console.error('Registration error:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateProfile = async (userData: Partial<User>): Promise<boolean> => {
-    try {
-      if (!user) return false;
-      
-      const updatedUser = { ...user, ...userData };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      return true;
-    } catch (error) {
-      console.error('Profile update error:', error);
       return false;
     }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    setTeams([]);
+    setBookings([]);
+    localStorage.removeItem('currentUser');
     navigate('/');
   };
 
+  const updateProfile = async (profileData: any): Promise<boolean> => {
+    try {
+      if (user) {
+        const updatedUser = { ...user, ...profileData };
+        setUser(updatedUser);
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return false;
+    }
+  };
+
+  const createTeam = async (teamData: any): Promise<string> => {
+    if (!user) throw new Error('User not authenticated');
+
+    const newTeam: Team = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: teamData.name,
+      description: teamData.description,
+      sport: teamData.sport,
+      city: teamData.city,
+      maxPlayers: teamData.maxPlayers,
+      logo: teamData.logo,
+      captain: user.name,
+      members: 1,
+      createdAt: new Date().toISOString()
+    };
+
+    const updatedTeams = [...teams, newTeam];
+    setTeams(updatedTeams);
+    localStorage.setItem(`teams_${user.id}`, JSON.stringify(updatedTeams));
+    
+    return newTeam.id;
+  };
+
+  const addBooking = (bookingData: any) => {
+    if (!user) return;
+
+    const newBooking: Booking = {
+      id: Math.random().toString(36).substr(2, 9),
+      turfId: bookingData.turfId,
+      turfName: bookingData.turfName,
+      date: bookingData.date,
+      timeSlot: bookingData.timeSlot,
+      status: 'pending',
+      paymentStatus: 'unpaid',
+      totalAmount: bookingData.totalAmount,
+      playerName: user.name,
+      playerEmail: user.email,
+      playerPhone: user.phone || ''
+    };
+
+    const updatedBookings = [...bookings, newBooking];
+    setBookings(updatedBookings);
+    localStorage.setItem(`bookings_${user.id}`, JSON.stringify(updatedBookings));
+  };
+
+  const updateBookingStatus = (bookingId: string, status: string, paymentStatus?: string) => {
+    const updatedBookings = bookings.map(booking => 
+      booking.id === bookingId 
+        ? { ...booking, status: status as any, ...(paymentStatus && { paymentStatus: paymentStatus as any }) }
+        : booking
+    );
+    setBookings(updatedBookings);
+    if (user) {
+      localStorage.setItem(`bookings_${user.id}`, JSON.stringify(updatedBookings));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, updateProfile, isLoading }}>
+    <AuthContext.Provider value={{
+      user,
+      teams,
+      bookings,
+      login,
+      register,
+      logout,
+      updateProfile,
+      createTeam,
+      addBooking,
+      updateBookingStatus
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -15,6 +14,7 @@ import TournamentDetails from '@/pages/TournamentDetails';
 import BookingConfirmation from '@/pages/BookingConfirmation';
 import BookingSuccess from '@/pages/BookingSuccess';
 import Nearby from '@/pages/Nearby';
+import Tournaments from '@/pages/Tournaments';
 
 // Dashboard Pages
 import PlayerDashboard from '@/pages/PlayerDashboard';
@@ -24,6 +24,11 @@ import PlayerSettings from '@/pages/PlayerSettings';
 import PlayerMatchmaking from '@/pages/PlayerMatchmaking';
 import PlayerTeams from '@/pages/PlayerTeams';
 import CreateTeam from '@/pages/CreateTeam';
+
+// Admin Pages
+import AdminDashboard from '@/pages/AdminDashboard';
+import SuperAdminDashboard from '@/pages/SuperAdminDashboard';
+import TurfOwnerAdManager from '@/pages/TurfOwnerAdManager';
 
 function App() {
   return (
@@ -39,7 +44,7 @@ function App() {
               <Route path="/turfs" element={<Turfs />} />
               <Route path="/turf/:id" element={<TurfDetails />} />
               <Route path="/tournament/:id" element={<TournamentDetails />} />
-              <Route path="/tournaments" element={<PlayerTournaments />} />
+              <Route path="/tournaments" element={<Tournaments />} />
               <Route path="/nearby" element={<Nearby />} />
               
               {/* Booking Routes */}
@@ -50,7 +55,7 @@ function App() {
               <Route 
                 path="/player/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <PlayerDashboard />
                   </ProtectedRoute>
                 } 
@@ -58,7 +63,7 @@ function App() {
               <Route 
                 path="/player/bookings" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <PlayerBookings />
                   </ProtectedRoute>
                 } 
@@ -66,7 +71,7 @@ function App() {
               <Route 
                 path="/player/tournaments" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <PlayerTournaments />
                   </ProtectedRoute>
                 } 
@@ -74,7 +79,7 @@ function App() {
               <Route 
                 path="/player/settings" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <PlayerSettings />
                   </ProtectedRoute>
                 } 
@@ -82,7 +87,7 @@ function App() {
               <Route 
                 path="/player/matchmaking" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <PlayerMatchmaking />
                   </ProtectedRoute>
                 } 
@@ -90,7 +95,7 @@ function App() {
               <Route 
                 path="/player/teams" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <PlayerTeams />
                   </ProtectedRoute>
                 } 
@@ -98,7 +103,7 @@ function App() {
               <Route 
                 path="/player/teams/create" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <CreateTeam />
                   </ProtectedRoute>
                 } 
@@ -106,16 +111,36 @@ function App() {
               <Route 
                 path="/player/teams/:id" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
+                  <ProtectedRoute allowedRoles={['player', 'admin', 'super_admin']}>
                     <PlayerTeams />
                   </ProtectedRoute>
                 } 
               />
+
+              {/* Admin Routes */}
               <Route 
-                path="/player/messages" 
+                path="/admin/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['player', 'admin']}>
-                    <PlayerDashboard />
+                  <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/super-admin/dashboard" 
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <SuperAdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* Turf Owner Routes */}
+              <Route 
+                path="/turf-owner/ads" 
+                element={
+                  <ProtectedRoute allowedRoles={['turf_owner', 'admin', 'super_admin']}>
+                    <TurfOwnerAdManager />
                   </ProtectedRoute>
                 } 
               />

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -323,7 +324,11 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             {featuredTurfs.slice(0, 3).map((turf) => (
-              <Card key={turf.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
+              <Card 
+                key={turf.id} 
+                className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/80 backdrop-blur-sm cursor-pointer"
+                onClick={() => navigate(`/turf/${turf.id}`)}
+              >
                 <div className="relative overflow-hidden">
                   <img 
                     src={turf.image} 
@@ -344,7 +349,10 @@ const Index = () => {
                     <Button 
                       size="sm" 
                       className="bg-white/90 text-gray-900 hover:bg-white"
-                      onClick={() => navigate(`/turf/${turf.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/turf/${turf.id}`);
+                      }}
                     >
                       View Details
                     </Button>
@@ -364,7 +372,10 @@ const Index = () => {
                     <div className="text-2xl font-bold text-green-600">৳{turf.price}</div>
                     <Button 
                       className="bg-green-600 hover:bg-green-700"
-                      onClick={() => navigate(`/turf/${turf.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/turf/${turf.id}`);
+                      }}
                     >
                       Book Now
                     </Button>
@@ -422,7 +433,11 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredTurfs.map((turf) => (
-              <Card key={turf.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/90 backdrop-blur-sm">
+              <Card 
+                key={turf.id} 
+                className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/90 backdrop-blur-sm cursor-pointer"
+                onClick={() => navigate(`/turf/${turf.id}`)}
+              >
                 <div className="relative overflow-hidden">
                   <img 
                     src={turf.image} 
@@ -453,14 +468,20 @@ const Index = () => {
                       <Button 
                         size="sm" 
                         variant="outline"
-                        onClick={() => navigate(`/turf/${turf.id}`)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/turf/${turf.id}`);
+                        }}
                       >
                         Details
                       </Button>
                       <Button 
                         size="sm" 
                         className="bg-green-600 hover:bg-green-700"
-                        onClick={() => navigate(`/turf/${turf.id}`)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/turf/${turf.id}`);
+                        }}
                       >
                         Book
                       </Button>
@@ -487,7 +508,11 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {upcomingTournaments.map((tournament) => (
-              <Card key={tournament.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/90 backdrop-blur-sm">
+              <Card 
+                key={tournament.id} 
+                className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/90 backdrop-blur-sm cursor-pointer"
+                onClick={() => navigate(`/tournament/${tournament.id}`)}
+              >
                 <div className="relative overflow-hidden">
                   <img 
                     src={tournament.image} 
@@ -507,7 +532,10 @@ const Index = () => {
                     <Button 
                       size="sm" 
                       className="bg-white/90 text-gray-900 hover:bg-white"
-                      onClick={() => navigate(`/tournament/${tournament.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/tournament/${tournament.id}`);
+                      }}
                     >
                       View Details
                     </Button>
@@ -535,7 +563,10 @@ const Index = () => {
                   </div>
                   <Button 
                     className="w-full bg-blue-600 hover:bg-blue-700"
-                    onClick={() => navigate(`/tournament/${tournament.id}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/tournament/${tournament.id}`);
+                    }}
                   >
                     {tournament.status === 'Registration Open' ? 'Register Now' : 'View Details'}
                   </Button>

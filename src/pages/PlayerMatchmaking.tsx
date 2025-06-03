@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   Search, 
   MapPin, 
@@ -17,13 +19,19 @@ import {
   Filter,
   Star,
   Calendar,
-  Target
+  Target,
+  Trophy,
+  CheckCircle
 } from 'lucide-react';
 
 const PlayerMatchmaking = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSport, setSelectedSport] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
+  const [connectedPlayers, setConnectedPlayers] = useState<number[]>([]);
+  const [joinedMatches, setJoinedMatches] = useState<number[]>([]);
 
   const nearbyPlayers = [
     {
@@ -37,7 +45,8 @@ const PlayerMatchmaking = () => {
       rating: 4.8,
       matches: 45,
       winRate: 78,
-      isOnline: true
+      isOnline: true,
+      bio: 'Passionate footballer looking for competitive matches'
     },
     {
       id: 2,
@@ -50,7 +59,8 @@ const PlayerMatchmaking = () => {
       rating: 4.5,
       matches: 32,
       winRate: 65,
-      isOnline: false
+      isOnline: false,
+      bio: 'Weekend tennis enthusiast, looking for doubles partners'
     },
     {
       id: 3,
@@ -63,7 +73,8 @@ const PlayerMatchmaking = () => {
       rating: 4.9,
       matches: 67,
       winRate: 85,
-      isOnline: true
+      isOnline: true,
+      bio: 'Professional cricket coach and player'
     }
   ];
 
@@ -73,46 +84,72 @@ const PlayerMatchmaking = () => {
       title: 'Football Match Tonight',
       location: 'Champions Arena',
       time: '7:00 PM',
+      date: 'Today',
       players: 8,
       maxPlayers: 10,
       skill: 'All Levels',
-      organizer: 'Ahmed Rahman'
+      organizer: 'Ahmed Rahman',
+      sport: 'Football',
+      description: 'Friendly football match, all skill levels welcome!'
     },
     {
       id: 2,
       title: 'Cricket Practice Session',
       location: 'Victory Ground',
       time: '6:00 AM',
+      date: 'Tomorrow',
       players: 12,
       maxPlayers: 16,
       skill: 'Intermediate+',
-      organizer: 'Mohammad Ali'
+      organizer: 'Mohammad Ali',
+      sport: 'Cricket',
+      description: 'Morning cricket practice with coaching tips'
     },
     {
       id: 3,
       title: 'Tennis Doubles',
       location: 'Elite Sports Club',
       time: '5:00 PM',
+      date: 'Feb 18',
       players: 3,
       maxPlayers: 4,
       skill: 'Beginner',
-      organizer: 'Sarah Khan'
+      organizer: 'Sarah Khan',
+      sport: 'Tennis',
+      description: 'Looking for one more player for doubles match'
     }
   ];
 
+  const filteredPlayers = nearbyPlayers.filter(player => {
+    const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         player.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSport = !selectedSport || player.sport.toLowerCase() === selectedSport.toLowerCase();
+    const matchesLocation = !selectedLocation || player.location.toLowerCase().includes(selectedLocation.toLowerCase());
+    return matchesSearch && matchesSport && matchesLocation;
+  });
+
   const handleConnect = (playerId: number) => {
-    console.log('Connecting to player:', playerId);
-    // Add connection logic here
+    if (connectedPlayers.includes(playerId)) {
+      setConnectedPlayers(prev => prev.filter(id => id !== playerId));
+    } else {
+      setConnectedPlayers(prev => [...prev, playerId]);
+    }
   };
 
   const handleMessage = (playerId: number) => {
-    console.log('Messaging player:', playerId);
-    // Add messaging logic here
+    navigate('/player/messages', { state: { playerId } });
   };
 
   const handleJoinMatch = (matchId: number) => {
-    console.log('Joining match:', matchId);
-    // Add join match logic here
+    if (joinedMatches.includes(matchId)) {
+      setJoinedMatches(prev => prev.filter(id => id !== matchId));
+    } else {
+      setJoinedMatches(prev => [...prev, matchId]);
+    }
+  };
+
+  const handleCreateMatch = () => {
+    navigate('/player/matches/create');
   };
 
   return (
@@ -177,9 +214,14 @@ const PlayerMatchmaking = () => {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Nearby Players */}
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Nearby Players</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Nearby Players</h2>
+                <Button onClick={handleCreateMatch} variant="outline">
+                  Create Match
+                </Button>
+              </div>
               <div className="space-y-4">
-                {nearbyPlayers.map((player) => (
+                {filteredPlayers.map((player) => (
                   <Card key={player.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
@@ -195,9 +237,11 @@ const PlayerMatchmaking = () => {
                           </div>
                           <div className="flex-1">
                             <h3 className="text-xl font-semibold text-gray-900">{player.name}</h3>
+                            <p className="text-gray-600 text-sm mb-2">{player.bio}</p>
                             <div className="flex items-center gap-4 mt-1">
                               <Badge variant="secondary">{player.sport}</Badge>
                               <Badge variant="outline">{player.skill}</Badge>
+                              {player.isOnline && <Badge className="bg-green-500">Online</Badge>}
                             </div>
                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                               <span className="flex items-center gap-1">
@@ -225,10 +269,18 @@ const PlayerMatchmaking = () => {
                             <Button 
                               size="sm"
                               onClick={() => handleConnect(player.id)}
-                              className="bg-green-600 hover:bg-green-700"
+                              className={`${
+                                connectedPlayers.includes(player.id) 
+                                  ? 'bg-gray-600 hover:bg-gray-700' 
+                                  : 'bg-green-600 hover:bg-green-700'
+                              }`}
                             >
-                              <UserPlus className="w-4 h-4 mr-1" />
-                              Connect
+                              {connectedPlayers.includes(player.id) ? (
+                                <CheckCircle className="w-4 h-4 mr-1" />
+                              ) : (
+                                <UserPlus className="w-4 h-4 mr-1" />
+                              )}
+                              {connectedPlayers.includes(player.id) ? 'Connected' : 'Connect'}
                             </Button>
                           </div>
                         </div>
@@ -247,6 +299,7 @@ const PlayerMatchmaking = () => {
                   <Card key={match.id} className="border-0 shadow-lg">
                     <CardContent className="p-4">
                       <h3 className="font-semibold text-gray-900 mb-2">{match.title}</h3>
+                      <p className="text-sm text-gray-600 mb-3">{match.description}</p>
                       <div className="space-y-2 text-sm text-gray-600 mb-4">
                         <div className="flex items-center gap-2">
                           <MapPin className="w-4 h-4" />
@@ -254,7 +307,7 @@ const PlayerMatchmaking = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4" />
-                          <span>{match.time}</span>
+                          <span>{match.time} • {match.date}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4" />
@@ -270,15 +323,43 @@ const PlayerMatchmaking = () => {
                       </div>
                       <Button 
                         size="sm" 
-                        className="w-full bg-blue-600 hover:bg-blue-700"
+                        className={`w-full ${
+                          joinedMatches.includes(match.id)
+                            ? 'bg-gray-600 hover:bg-gray-700'
+                            : 'bg-blue-600 hover:bg-blue-700'
+                        }`}
                         onClick={() => handleJoinMatch(match.id)}
                       >
-                        Join Match
+                        {joinedMatches.includes(match.id) ? 'Joined' : 'Join Match'}
                       </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
+
+              {/* Your Joined Matches */}
+              {joinedMatches.length > 0 && (
+                <Card className="mt-6 border-0 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Trophy className="w-5 h-5 text-green-500" />
+                      Your Upcoming Matches
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {quickMatches
+                        .filter(match => joinedMatches.includes(match.id))
+                        .map(match => (
+                          <div key={match.id} className="p-3 bg-green-50 rounded-lg">
+                            <h4 className="font-medium text-green-800">{match.title}</h4>
+                            <p className="text-sm text-green-600">{match.date} at {match.time}</p>
+                          </div>
+                        ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         </div>
